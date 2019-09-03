@@ -1,0 +1,10 @@
+{
+    "[javascript]": {
+        "editor.formatOnSave": true
+    },
+    "[typescript]": {
+        "editor.formatOnSave": true
+    },
+    "editor.rulers": [120],
+    "eslint.validate": ["javascript", "javascriptreact", "typescript"]
+}

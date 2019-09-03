@@ -1,0 +1,18 @@
+:root {
+    --background-color: #000;
+    --foreground-color: #fff;
+}
+
+html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--foreground-color);
+    background-color: var(--background-color);
+}
+
+canvas {
+    outline: solid 1px white;
+    display: block;
+    width: 800px;
+    height: 600px;
+    margin: auto;
+}
