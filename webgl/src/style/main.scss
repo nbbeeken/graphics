@@ -1,6 +1,7 @@
 :root {
     --background-color: #000;
     --foreground-color: #fff;
+    --error-color: salmon;
 }
 
 html {
@@ -15,4 +16,8 @@ canvas {
     width: 800px;
     height: 600px;
     margin: auto;
+}
+
+.error {
+    color: var(--error-color);
 }
