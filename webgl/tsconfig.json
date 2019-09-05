@@ -5,6 +5,7 @@
         "strict": true,
         "esModuleInterop": true,
         "sourceMap": true,
-        "inlineSourceMap": false
+        "inlineSourceMap": false,
+        "typeRoots": ["typing"]
     }
 }

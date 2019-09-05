@@ -6,5 +6,13 @@
         "editor.formatOnSave": true
     },
     "editor.rulers": [120],
-    "eslint.validate": ["javascript", "javascriptreact", "typescript"]
+    "eslint.validate": ["javascript", "javascriptreact", "typescript"],
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "npm.packageManager": "yarn",
+    "cSpell.words": [
+        "browserslist",
+        "glsl",
+        "webgl"
+    ],
+    "glsl-canvas.useCompactFormatter": false
 }
