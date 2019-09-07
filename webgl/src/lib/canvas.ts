@@ -1,10 +1,15 @@
-import { showError } from './utils'
+import { glCheckErrorProxy, showError } from './utils'
 
 function getRenderingContext(canvas: HTMLCanvasElement) {
     // You MUST initialize canvas height and width to your css expectations (client).
     canvas.width = canvas.clientWidth
     canvas.height = canvas.clientHeight
-    const gl = canvas.getContext('webgl2') as WebGL2RenderingContext
+    const contextOptions: WebGLContextAttributes = {
+        antialias: true,
+        powerPreference: 'high-performance',
+    }
+
+    const gl = glCheckErrorProxy(canvas.getContext('webgl2', contextOptions) as WebGL2RenderingContext)
 
     if (!gl) {
         showError('Failed to get WebGL2 context. Your browser or device may not support WebGL2.')
@@ -16,5 +21,5 @@ function getRenderingContext(canvas: HTMLCanvasElement) {
     return gl
 }
 
-const canvas: HTMLCanvasElement = document.querySelector('canvas')!
+const canvas = document.getElementById('mainDisplay') as HTMLCanvasElement
 export const gl = getRenderingContext(canvas)
