@@ -1,4 +1,5 @@
 import { gl } from './canvas'
+import { showError } from './utils'
 
 async function main(event: Event) {
     window.removeEventListener(event.type, main)
