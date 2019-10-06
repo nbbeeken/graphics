@@ -1,0 +1,17 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+  link(rel='stylesheet' href='main.css')
+  script(type='module' src='js/index.js')
+
+  title 2D Shading
+body
+  nav
+  main
+    canvas#display Canvas not supported!
+
+  script#vs(type='x-shader/x-vertex')
+    include ./shaders/vs.glsl
+  script#fs(type='x-shader/x-fragment')
+    include ./shaders/fs.glsl

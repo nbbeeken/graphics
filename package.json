@@ -1,0 +1,33 @@
+{
+    "name": "graphics",
+    "private": true,
+    "version": "1.0.0",
+    "description": "2D Shading pipeline",
+    "main": "src/index.ts",
+    "type": "module",
+    "scripts": {
+        "clean": "node --experimental-modules --no-warnings build.js clean",
+        "build": "node --experimental-modules --no-warnings build.js build",
+        "start": "npx miptleha-http public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nbbeeken/graphics.git"
+    },
+    "author": "Neal",
+    "license": "UNLICENSE",
+    "bugs": {
+        "url": "https://github.com/nbbeeken/graphics/issues"
+    },
+    "homepage": "https://github.com/nbbeeken/graphics#readme",
+    "devDependencies": {
+        "miptleha-http": "0.1.4",
+        "pug": "^2.0.4",
+        "pug-cli": "^1.0.0-alpha6",
+        "rimraf": "^3.0.0",
+        "typescript": "^3.6.3"
+    },
+    "dependencies": {
+        "twgl.js": "^4.11.2"
+    }
+}
