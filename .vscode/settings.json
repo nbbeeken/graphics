@@ -3,5 +3,6 @@
         "glsl",
         "miptleha",
         "twgl"
-    ]
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

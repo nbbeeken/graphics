@@ -21,13 +21,11 @@
     },
     "homepage": "https://github.com/nbbeeken/graphics#readme",
     "devDependencies": {
-        "miptleha-http": "0.1.4",
-        "pug": "^2.0.4",
-        "pug-cli": "^1.0.0-alpha6",
-        "rimraf": "^3.0.0",
-        "typescript": "^3.6.3"
+        "miptleha-http": "latest",
+        "pug": "latest",
+        "pug-cli": "latest",
+        "rimraf": "latest",
+        "typescript": "beta"
     },
-    "dependencies": {
-        "twgl.js": "^4.11.2"
-    }
+    "dependencies": {}
 }

@@ -1,7 +1,6 @@
 import { gl, resizeCanvas } from "./canvas.js"
 import * as twgl from "./vendor/twgl/twgl-full.js"
 
-
 function setup() {
     console.log('start')
     const programInfo = twgl.createProgramInfo(gl, ['vs', 'fs'])
