@@ -21,6 +21,8 @@
     },
     "include": [
         "src/**/*",
-        "types/**/*"
+        "types/**/*",
+        "node_modules/twgl.js/**/*",
+        "node_modules/dat.gui/**/*"
     ]
 }
