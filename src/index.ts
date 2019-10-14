@@ -1,37 +1,3 @@
-import { gl, resizeCanvas } from "./canvas"
-import * as twgl from "twgl.js"
-import * as dat from 'dat.gui'
+import { main } from "./web/main"
 
-const fs = require("./shaders/fs.frag")
-const vs = require("./shaders/vs.vert")
-
-const gui = new dat.GUI()
-console.dir(gui)
-
-function setup() {
-    console.log('start')
-    const programInfo = twgl.createProgramInfo(gl, [vs, fs])
-    const arrays = {
-        position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
-    }
-    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
-
-    const draw = (thisTime: number) => {
-        resizeCanvas(gl)
-
-        const uniforms = {
-            time: thisTime * 0.001,
-            resolution: [gl.canvas.width, gl.canvas.height],
-        };
-
-        gl.useProgram(programInfo.program);
-        twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo)
-        twgl.setUniforms(programInfo, uniforms);
-        twgl.drawBufferInfo(gl, bufferInfo);
-
-        requestAnimationFrame(draw)
-    }
-    requestAnimationFrame(draw)
-}
-
-window.addEventListener('DOMContentLoaded', setup)
+window.addEventListener('DOMContentLoaded', main)

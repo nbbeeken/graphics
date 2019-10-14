@@ -7,6 +7,7 @@ const commands = process.argv
 if (commands.includes('clean')) {
     // reset project directory
     rimraf.sync('public')
+    rimraf.sync('.cache')
 }
 
 if (commands.includes('build')) {
@@ -28,4 +29,8 @@ if (commands.includes('build')) {
         console.error(error.stdout)
     }
     console.log('done.')
+}
+
+if (commands.includes('postinstall')) {
+    // TODO
 }

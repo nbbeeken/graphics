@@ -6,9 +6,10 @@
     "main": "src/index.ts",
     "type": "module",
     "scripts": {
+        "postinstall": "node --experimental-modules --no-warnings build.js postinstall",
         "clean": "node --experimental-modules --no-warnings build.js clean",
         "build": "node --experimental-modules --no-warnings build.js build",
-        "start": "npx miptleha-http public"
+        "start": "npx parcel src/index.html"
     },
     "repository": {
         "type": "git",
@@ -33,7 +34,6 @@
     },
     "dependencies": {
         "dat.gui": "^0.7.6",
-        "parcel-bundler": "^1.12.4",
-        "twgl.js": "^4.11.2"
+        "parcel-bundler": "^1.12.4"
     }
 }

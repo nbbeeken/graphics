@@ -49,7 +49,7 @@ function getRenderingContext(canvas: HTMLCanvasElement) {
 
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
-    gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     return gl
 }
 
@@ -63,9 +63,7 @@ export function resizeCanvas(gl: WebGL2RenderingContext) {
     var displayHeight = Math.floor((gl.canvas as HTMLCanvasElement).clientHeight * realToCSSPixels);
 
     // Check if the canvas is not the same size.
-    if (gl.canvas.width !== displayWidth ||
-        gl.canvas.height !== displayHeight) {
-
+    if (gl.canvas.width !== displayWidth || gl.canvas.height !== displayHeight) {
         // Make the canvas the same size
         gl.canvas.width = displayWidth;
         gl.canvas.height = displayHeight;
