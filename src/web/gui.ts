@@ -3,7 +3,7 @@ import * as dat from "dat.gui"
 export class GUIControls {
     constructor(
         // Translating
-        public translationX: number = 45,
+        public translationX: number = 145,
         public translationY: number = 150,
         public translationZ: number = 0,
         // Scaling
@@ -11,10 +11,10 @@ export class GUIControls {
         public scaleY: number = 1,
         public scaleZ: number = 1,
         // Rotating
-        public rotationX: number = 40,
-        public rotationY: number = 25,
-        public rotationZ: number = 325,
-        public colorVec: [number, number, number] = [29, 116, 178],
+        public rotationX: number = 0,
+        public rotationY: number = 0,
+        public rotationZ: number = 0,
+        public colorVec: [number, number, number] = [35, 200, 0],
         public colorAlpha: number = 1.0,
     ) { }
 
@@ -28,7 +28,7 @@ export class GUIControls {
         return { x: this.rotationX, y: this.rotationY, z: this.rotationZ }
     }
     get color(): [number, number, number, number] {
-        return [...this.colorVec.slice(0, 3).map(v => v / 255), this.colorAlpha]
+        return [...this.colorVec.slice(0, 3).map(v => v / 255), this.colorAlpha] as [number, number, number, number]
     }
 }
 
@@ -46,9 +46,9 @@ export function initGui(guiControls: GUIControls) {
     scaleFolder.add(guiControls, 'scaleZ', -5, 5)
 
     const rotationFolder = gui.addFolder('rotation')
-    rotationFolder.add(guiControls, 'rotationX', 0, 360)
-    rotationFolder.add(guiControls, 'rotationY', 0, 360)
-    rotationFolder.add(guiControls, 'rotationZ', 0, 360)
+    rotationFolder.add(guiControls, 'rotationX', 0, 360).listen()
+    rotationFolder.add(guiControls, 'rotationY', 0, 360).listen()
+    rotationFolder.add(guiControls, 'rotationZ', 0, 360).listen()
 
     const colorFolder = gui.addFolder('color')
     colorFolder.addColor(guiControls, 'colorVec')

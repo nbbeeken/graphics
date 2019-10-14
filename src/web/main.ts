@@ -8,9 +8,13 @@ import vs from "../shaders/vs.vert"
 import { newProjectionMatrix, translate, rotate, scale } from "./matrix"
 
 export function main() {
-    const guiControls = new GUIControls()
-    initGui(guiControls)
+    let lastTime: number = 0
+
+    const fControls = new GUIControls()
+    initGui(fControls)
+
     const programInfo = twgl.createProgramInfo(gl, [vs, fs])
+
     const arrays = {
         position: new Float32Array([
             // left column front
@@ -144,33 +148,46 @@ export function main() {
     }
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
 
-    function draw(thisTime: number) {
+    function render(thisTime: number) {
         resizeCanvas(gl)
+        draw(thisTime / 1000, lastTime / 1000)
+        lastTime = thisTime
+        requestAnimationFrame(render)
+    }
+    requestAnimationFrame(render)
 
-        const time = thisTime / 1000
+    function draw(thisTime: number, lastTime: number) {
         const resolution = [gl.canvas.width, gl.canvas.height] as [number, number]
 
-        const perspective = newProjectionMatrix(resolution[0], resolution[1], 1000)
+        const projection = newProjectionMatrix(resolution[0], resolution[1], 1000)
 
         let transform
-        transform = translate(perspective, guiControls.translation)
-        transform = rotate(transform, guiControls.rotation)
-        transform = scale(transform, guiControls.scaling)
+        transform = translate(projection, fControls.translation)
+        transform = rotate(transform, fControls.rotation)
+        transform = scale(transform, fControls.scaling)
+
+        if (thisTime.toFixed(0) !== lastTime.toFixed(0)) {
+            // Once a second
+            fControls.rotationZ += 5
+            fControls.rotationZ %= 360
+
+            fControls.rotationX += 5
+            fControls.rotationX %= 360
+
+            fControls.rotationY += 5
+            fControls.rotationY %= 360
+        }
 
         let uniforms = {
-            time,
+            time: thisTime,
             resolution,
-            color: guiControls.color,
+            color: fControls.color,
             transform,
         }
 
-        gl.useProgram(programInfo.program);
+        gl.useProgram(programInfo.program)
         twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo)
-        twgl.setUniforms(programInfo, uniforms);
-        twgl.drawBufferInfo(gl, bufferInfo);
-
-        requestAnimationFrame(draw)
+        twgl.setUniforms(programInfo, uniforms)
+        twgl.drawBufferInfo(gl, bufferInfo)
     }
-
-    requestAnimationFrame(draw)
 }
