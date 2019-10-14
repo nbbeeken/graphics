@@ -2,7 +2,6 @@
 precision highp float;
 
 uniform vec4 color;
-
 uniform vec2 resolution;
 uniform float time;
 

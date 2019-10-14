@@ -5,7 +5,7 @@ import * as twgl from "../../vendor/twgl"
 
 import fs from "../shaders/fs.frag"
 import vs from "../shaders/vs.vert"
-import { degreeToRadian, makeProjectionMatrix } from "./utils"
+import { newProjectionMatrix } from "./matrix"
 
 export function main() {
     const guiControls = new GUIControls(1)
@@ -144,12 +144,26 @@ export function main() {
     }
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
 
-    const translation = [45, 150, 0]
-    const rotation = [degreeToRadian(40), degreeToRadian(25), degreeToRadian(325)]
-    const scale = [1, 1, 1]
+    const translation = [45, 150, 0] as [number, number, number]
+    const rotation = { x: 40, y: 25, z: 325 }
+    const scale = [1, 1, 1] as [number, number, number]
     const color = [1, 0, 0, 1]
 
-    const matrix = makeProjectionMatrix(gl.canvas.width, gl.canvas.height, 400)
+    let transform = newProjectionMatrix(gl.canvas.width, gl.canvas.height, 1000)
+    transform.translate(...translation)
+    transform.rotateX(rotation.x)
+    transform.rotateY(rotation.y)
+    transform.rotateZ(rotation.z)
+    transform.scale(...scale)
+
+    let uniforms = {
+        time: 0,
+        resolution: [gl.canvas.width, gl.canvas.height],
+        color,
+        transform: transform.internal,
+    }
+
+    twgl.setUniforms(programInfo, uniforms)
 
     function draw(thisTime: number) {
         resizeCanvas(gl)
@@ -157,18 +171,12 @@ export function main() {
         const time = thisTime / 1000
         const resolution = [gl.canvas.width, gl.canvas.height]
 
-        twgl.m4.translate(matrix, translation)
-        twgl.m4.rotateX(matrix, rotation[0])
-        twgl.m4.rotateY(matrix, rotation[1])
-        twgl.m4.rotateZ(matrix, rotation[2])
-        twgl.m4.scale(matrix, scale)
-
-        const uniforms = {
+        uniforms = {
             time,
             resolution,
             color,
-            matrix,
-        };
+            transform: transform.internal,
+        }
 
         gl.useProgram(programInfo.program);
         twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo)

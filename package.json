@@ -8,7 +8,7 @@
     "scripts": {
         "postinstall": "node --experimental-modules --no-warnings build.js postinstall",
         "clean": "node --experimental-modules --no-warnings build.js clean",
-        "build": "node --experimental-modules --no-warnings build.js build",
+        "build": "npx parcel --build src/index.html",
         "start": "npx parcel src/index.html"
     },
     "repository": {
