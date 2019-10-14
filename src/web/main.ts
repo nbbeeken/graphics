@@ -5,10 +5,10 @@ import * as twgl from "../../vendor/twgl"
 
 import fs from "../shaders/fs.frag"
 import vs from "../shaders/vs.vert"
-import { newProjectionMatrix } from "./matrix"
+import { newProjectionMatrix, translate, rotate, scale } from "./matrix"
 
 export function main() {
-    const guiControls = new GUIControls(1)
+    const guiControls = new GUIControls()
     initGui(guiControls)
     const programInfo = twgl.createProgramInfo(gl, [vs, fs])
     const arrays = {
@@ -144,38 +144,24 @@ export function main() {
     }
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
 
-    const translation = [45, 150, 0] as [number, number, number]
-    const rotation = { x: 40, y: 25, z: 325 }
-    const scale = [1, 1, 1] as [number, number, number]
-    const color = [1, 0, 0, 1]
-
-    let transform = newProjectionMatrix(gl.canvas.width, gl.canvas.height, 1000)
-    transform.translate(...translation)
-    transform.rotateX(rotation.x)
-    transform.rotateY(rotation.y)
-    transform.rotateZ(rotation.z)
-    transform.scale(...scale)
-
-    let uniforms = {
-        time: 0,
-        resolution: [gl.canvas.width, gl.canvas.height],
-        color,
-        transform: transform.internal,
-    }
-
-    twgl.setUniforms(programInfo, uniforms)
-
     function draw(thisTime: number) {
         resizeCanvas(gl)
 
         const time = thisTime / 1000
-        const resolution = [gl.canvas.width, gl.canvas.height]
+        const resolution = [gl.canvas.width, gl.canvas.height] as [number, number]
 
-        uniforms = {
+        const perspective = newProjectionMatrix(resolution[0], resolution[1], 1000)
+
+        let transform
+        transform = translate(perspective, guiControls.translation)
+        transform = rotate(transform, guiControls.rotation)
+        transform = scale(transform, guiControls.scaling)
+
+        let uniforms = {
             time,
             resolution,
-            color,
-            transform: transform.internal,
+            color: guiControls.color,
+            transform,
         }
 
         gl.useProgram(programInfo.program);
