@@ -1,12 +1,5 @@
-#version 300 es
 
-/**
- * Implicitly declared:
- * in highp int gl_VertexID;
- * in highp int gl_InstanceID;
- * out highp vec4 gl_Position;
- * out highp float gl_PointSize;
-**/
+#version 300 es
 
 in vec4 position;
 

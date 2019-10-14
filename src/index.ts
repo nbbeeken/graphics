@@ -1,9 +1,16 @@
-import { gl, resizeCanvas } from "./canvas.js"
-import * as twgl from "./vendor/twgl/twgl-full.js"
+import { gl, resizeCanvas } from "./canvas"
+import * as twgl from "twgl.js"
+import * as dat from 'dat.gui'
+
+const fs = require("./shaders/fs.frag")
+const vs = require("./shaders/vs.vert")
+
+const gui = new dat.GUI()
+console.dir(gui)
 
 function setup() {
     console.log('start')
-    const programInfo = twgl.createProgramInfo(gl, ['vs', 'fs'])
+    const programInfo = twgl.createProgramInfo(gl, [vs, fs])
     const arrays = {
         position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
     }

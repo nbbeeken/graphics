@@ -1,4 +1,4 @@
-import { showError } from "./utils.js"
+import { showError } from "./utils"
 
 const PROXY_ENABLED = false;
 

@@ -2,6 +2,8 @@
 js/
 package-lock.json
 public/
+dist/
+.cache/
 
 .vscode/
 !.vscode/settings.json
