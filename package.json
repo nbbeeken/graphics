@@ -30,7 +30,9 @@
         "typescript": "beta"
     },
     "dependencies": {
+        "@types/stats.js": "^0.17.0",
         "dat.gui": "latest",
-        "parcel-bundler": "latest"
+        "parcel-bundler": "latest",
+        "stats.js": "^0.17.0"
     }
 }

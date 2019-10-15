@@ -16,6 +16,8 @@ export class GUIControls {
         public rotationZ: number = 0,
         public colorVec: [number, number, number] = [35, 200, 0],
         public colorAlpha: number = 1.0,
+
+        public animate: boolean = false,
     ) { }
 
     get translation(): [number, number, number] {
@@ -34,6 +36,8 @@ export class GUIControls {
 
 export function initGui(guiControls: GUIControls) {
     const gui = new dat.GUI()
+
+    gui.add(guiControls, 'animate')
 
     const translationFolder = gui.addFolder('translation')
     translationFolder.add(guiControls, 'translationX', 0, 1000)
