@@ -6,8 +6,8 @@
     "main": "src/index.ts",
     "type": "module",
     "scripts": {
-        "postinstall": "node --experimental-modules --no-warnings build.js postinstall",
-        "clean": "node --experimental-modules --no-warnings build.js clean",
+        "postinstall": "node --experimental-modules --no-warnings scripts.js postinstall",
+        "clean": "node --experimental-modules --no-warnings scripts.js clean",
         "build": "npx parcel build src/index.html",
         "start": "npx parcel src/index.html"
     },
@@ -22,15 +22,15 @@
     },
     "homepage": "https://github.com/nbbeeken/graphics#readme",
     "devDependencies": {
-        "@types/dat.gui": "^0.7.4",
-        "@types/node": "^12.7.11",
-        "glslify-bundle": "^5.1.1",
-        "glslify-deps": "^1.3.1",
-        "rimraf": "^3.0.0",
-        "typescript": "^3.6.3"
+        "@types/dat.gui": "latest",
+        "@types/node": "latest",
+        "glslify-bundle": "latest",
+        "glslify-deps": "latest",
+        "rimraf": "latest",
+        "typescript": "beta"
     },
     "dependencies": {
-        "dat.gui": "^0.7.6",
-        "parcel-bundler": "^1.12.4"
+        "dat.gui": "latest",
+        "parcel-bundler": "latest"
     }
 }

@@ -150,13 +150,14 @@ export function main() {
 
     function render(thisTime: number) {
         resizeCanvas(gl)
-        draw(thisTime / 1000, lastTime / 1000)
+        draw(+(thisTime / 1000).toFixed(5), +(lastTime / 1000).toFixed(5))
         lastTime = thisTime
         requestAnimationFrame(render)
     }
     requestAnimationFrame(render)
 
     function draw(thisTime: number, lastTime: number) {
+        console.log(thisTime, lastTime)
         const resolution = [gl.canvas.width, gl.canvas.height] as [number, number]
 
         const projection = newProjectionMatrix(resolution[0], resolution[1], 1000)

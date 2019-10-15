@@ -1,6 +1,6 @@
 import { showError } from "./utils"
 
-const PROXY_ENABLED = false;
+const PROXY_ENABLED = false
 
 export function glCheckErrorProxy(gl: WebGL2RenderingContext) {
     function get(target: WebGL2RenderingContext, key: keyof WebGL2RenderingContext) {
@@ -54,24 +54,24 @@ function getRenderingContext(canvas: HTMLCanvasElement) {
 }
 
 export function resizeCanvas(gl: WebGL2RenderingContext) {
-    var realToCSSPixels = window.devicePixelRatio;
+    var realToCSSPixels = window.devicePixelRatio
 
     // Lookup the size the browser is displaying the canvas in CSS pixels
     // and compute a size needed to make our drawing buffer match it in
     // device pixels.
-    var displayWidth = Math.floor((gl.canvas as HTMLCanvasElement).clientWidth * realToCSSPixels);
-    var displayHeight = Math.floor((gl.canvas as HTMLCanvasElement).clientHeight * realToCSSPixels);
+    var displayWidth = Math.floor((gl.canvas as HTMLCanvasElement).clientWidth * realToCSSPixels)
+    var displayHeight = Math.floor((gl.canvas as HTMLCanvasElement).clientHeight * realToCSSPixels)
 
     // Check if the canvas is not the same size.
     if (gl.canvas.width !== displayWidth || gl.canvas.height !== displayHeight) {
         // Make the canvas the same size
-        gl.canvas.width = displayWidth;
-        gl.canvas.height = displayHeight;
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.canvas.width = displayWidth
+        gl.canvas.height = displayHeight
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
     }
 }
 
-const canvas = document.getElementById('display') as HTMLCanvasElement;
-const gl = getRenderingContext(canvas);
+const canvas = document.getElementById('display') as HTMLCanvasElement
+const gl = getRenderingContext(canvas)
 
-export { gl };
+export { gl }
