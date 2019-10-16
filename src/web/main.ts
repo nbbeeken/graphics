@@ -39,8 +39,6 @@ export function main() {
         stats.end()
         requestAnimationFrame(render)
     }
-    requestAnimationFrame(render)
-
     function draw(thisTime: number, lastTime: number) {
         const resolution = [gl.canvas.width, gl.canvas.height] as [number, number]
 
@@ -51,16 +49,11 @@ export function main() {
         transform = rotate(transform, fControls.rotation)
         transform = scale(transform, fControls.scaling)
 
+        // Calc normal
+
         if (fControls.animate) {
             // Dance
-            fControls.rotationX += 1
-            fControls.rotationX %= 360
-
-            fControls.rotationY += 1
-            fControls.rotationY %= 360
-
-            fControls.rotationZ += 1
-            fControls.rotationZ %= 360
+            fControls.rotationAnimation()
         }
 
         let uniforms = {
@@ -74,4 +67,5 @@ export function main() {
         twgl.setUniforms(programInfo, uniforms)
         twgl.drawBufferInfo(gl, bufferInfo)
     }
+    requestAnimationFrame(render)
 }

@@ -7,6 +7,7 @@ CSE 528 Computer Graphics
 - https://webgl2fundamentals.org/webgl/lessons/
 - https://twgljs.org/
 - https://www.youtube.com/watch?v=kjBOesZCoqc&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab
+- https://learnopengl.com
 
 ## Libraries Used:
 
