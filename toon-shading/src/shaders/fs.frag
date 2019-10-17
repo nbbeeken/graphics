@@ -1,14 +1,14 @@
 #version 300 es
 precision highp float;
+precision highp int;
 
-// uniform vec4 color;
 uniform vec2 resolution;
 uniform float time;
 
-in vec4 vColor;
+in vec4 vertexColor;
 
-out vec4 fragmentOutputColor;
+out vec4 fragmentColor;
 
 void main() {
-    fragmentOutputColor = vColor;
+    fragmentColor = vertexColor;
 }

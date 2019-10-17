@@ -1,6 +1,7 @@
 import * as dat from "dat.gui"
 
 export class GUIControls {
+    gui: dat.GUI
     constructor(
         // Translating
         public translationX: number = 145,
@@ -18,7 +19,30 @@ export class GUIControls {
         public colorAlpha: number = 1.0,
 
         public animate: boolean = false,
-    ) { }
+    ) {
+        this.gui = new dat.GUI()
+
+        this.gui.add(this, 'animate')
+
+        const translationFolder = this.gui.addFolder('translation')
+        translationFolder.add(this, 'translationX', 0, 1000)
+        translationFolder.add(this, 'translationY', 0, 1000)
+        translationFolder.add(this, 'translationZ', -1000, 1000)
+
+        const scaleFolder = this.gui.addFolder('scale')
+        scaleFolder.add(this, 'scaleX', -5, 5).listen()
+        scaleFolder.add(this, 'scaleY', -5, 5).listen()
+        scaleFolder.add(this, 'scaleZ', -5, 5).listen()
+
+        const rotationFolder = this.gui.addFolder('rotation')
+        rotationFolder.add(this, 'rotationX', -180, 180).listen()
+        rotationFolder.add(this, 'rotationY', -180, 180).listen()
+        rotationFolder.add(this, 'rotationZ', -180, 180).listen()
+
+        const colorFolder = this.gui.addFolder('color')
+        colorFolder.addColor(this, 'colorVec')
+        colorFolder.add(this, 'colorAlpha', 0, 1, 0.01)
+    }
 
     get translation(): [number, number, number] {
         return [this.translationX, this.translationY, this.translationZ]
@@ -50,29 +74,4 @@ export class GUIControls {
         // this.scaleY = this.scaleY < 2.5 ? this.scaleY : 0.5
         // this.scaleZ = this.scaleZ < 2.5 ? this.scaleZ : 0.5
     }
-}
-
-export function initGui(guiControls: GUIControls) {
-    const gui = new dat.GUI()
-
-    gui.add(guiControls, 'animate')
-
-    const translationFolder = gui.addFolder('translation')
-    translationFolder.add(guiControls, 'translationX', 0, 1000)
-    translationFolder.add(guiControls, 'translationY', 0, 1000)
-    translationFolder.add(guiControls, 'translationZ', -1000, 1000)
-
-    const scaleFolder = gui.addFolder('scale')
-    scaleFolder.add(guiControls, 'scaleX', -5, 5).listen()
-    scaleFolder.add(guiControls, 'scaleY', -5, 5).listen()
-    scaleFolder.add(guiControls, 'scaleZ', -5, 5).listen()
-
-    const rotationFolder = gui.addFolder('rotation')
-    rotationFolder.add(guiControls, 'rotationX', -180, 180).listen()
-    rotationFolder.add(guiControls, 'rotationY', -180, 180).listen()
-    rotationFolder.add(guiControls, 'rotationZ', -180, 180).listen()
-
-    const colorFolder = gui.addFolder('color')
-    colorFolder.addColor(guiControls, 'colorVec')
-    colorFolder.add(guiControls, 'colorAlpha', 0, 1, 0.01)
 }
