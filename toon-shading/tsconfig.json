@@ -5,7 +5,6 @@
         "moduleResolution": "node",
         "allowJs": false,
         "sourceMap": true,
-        "sourceRoot": "src/",
         "isolatedModules": true, /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
         "strict": true, /* Enable all strict type-checking options. */
         "alwaysStrict": true, /* Parse in strict mode and emit "use strict" for each source file. */

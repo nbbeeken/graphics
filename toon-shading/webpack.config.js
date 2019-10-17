@@ -9,8 +9,9 @@ const Stylish = require('webpack-stylish')
 const config = {
     stats: false,
     entry: './src/index.ts',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     devServer: {
+        writeToDisk: true,
         compress: false,
         port: 1234,
     },
