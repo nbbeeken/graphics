@@ -1,4 +1,4 @@
-export const enum WEBGL {
+export enum WEBGL {
     ACTIVE_ATTRIBUTES = 0x8B89,
     ACTIVE_TEXTURE = 0x84E0,
     ACTIVE_UNIFORMS = 0x8B86,

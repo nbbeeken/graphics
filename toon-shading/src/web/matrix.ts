@@ -1,4 +1,4 @@
-import * as twgl from "../../vendor/twgl"
+import * as twgl from "twgl.js"
 const { m4 } = twgl
 
 export function radianToDegree(radians: number) {

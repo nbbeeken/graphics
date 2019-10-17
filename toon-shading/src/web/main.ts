@@ -2,12 +2,13 @@ import Stats from "stats.js"
 import { gl, resizeCanvas } from "./canvas"
 import { initGui, GUIControls } from "./gui"
 
-import * as twgl from "../../vendor/twgl"
+import * as twgl from "twgl.js"
 
 import fs from "../shaders/fs.frag"
 import vs from "../shaders/vs.vert"
 import { newProjectionMatrix, translate, rotate, scale } from "./matrix"
 import { LETTER_F, LETTER_F_COLORS } from "./shapes"
+import { WEBGL } from "./constants"
 
 const stats = new Stats()
 stats.showPanel(0)
@@ -15,6 +16,8 @@ document.body.appendChild(stats.dom)
 
 export function main() {
     let lastTime: number = 0
+
+    console.log(WEBGL.ALIASED_LINE_WIDTH_RANGE)
 
     const fControls = new GUIControls()
     initGui(fControls)

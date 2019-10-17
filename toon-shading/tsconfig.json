@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "target": "ESNEXT",
-        "module": "ESNext",
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
         "allowJs": false,
         "sourceMap": true,
         "sourceRoot": "src/",
@@ -14,6 +15,7 @@
         "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
         "experimentalDecorators": true, /* Enables experimental support for ES7 decorators. */
         "emitDecoratorMetadata": true, /* Enables experimental support for emitting type metadata for decorators. */
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true
     }
 }
