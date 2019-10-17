@@ -1,5 +1,5 @@
 {
-    "name": "graphics",
+    "name": "toon-shading",
     "private": true,
     "version": "1.0.0",
     "description": "2D Shading pipeline",
