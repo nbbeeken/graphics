@@ -1,7 +1,7 @@
 import Stats from "stats.js"
 import { resizeCanvas, gl } from "./canvas"
 import * as twgl from "twgl.js"
-import { newProjectionMatrix, translate, rotate, scale } from "./matrix"
+import { newProjectionMatrix, translate, rotate, scale } from "./maths"
 import { GUIControls } from "./gui"
 import { LETTER_F, LETTER_F_COLORS } from "./shapes"
 
@@ -29,8 +29,8 @@ export class Renderer {
         this.programInfo = twgl.createProgramInfo(gl, [vs, fs])
 
         const arrays = {
-            position: LETTER_F,
-            color: LETTER_F_COLORS,
+            position: new Float32Array(LETTER_F),
+            color: new Uint8Array(LETTER_F_COLORS),
         }
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
     }

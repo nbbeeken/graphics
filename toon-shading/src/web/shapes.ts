@@ -1,4 +1,4 @@
-export const LETTER_F = new Float32Array([
+export const LETTER_F = [
     // left column front
     0, 0, 0,
     0, 150, 0,
@@ -111,9 +111,9 @@ export const LETTER_F = new Float32Array([
     0, 0, 0,
     0, 150, 30,
     0, 150, 0,
-])
+]
 
-export const LETTER_F_COLORS = new Uint8Array([
+export const LETTER_F_COLORS = [
     // left column front
     200, 70, 120, 255,
     200, 70, 120, 255,
@@ -226,4 +226,4 @@ export const LETTER_F_COLORS = new Uint8Array([
     160, 160, 220, 255,
     160, 160, 220, 255,
     160, 160, 220, 255,
-])
+]
