@@ -52,7 +52,7 @@ export class Renderer {
     private render = (thisTime: number) => {
         stats.begin()
         resizeCanvas(gl)
-        gl.clearColor(0, 0, 0, 0)
+        gl.clearColor(0.2, 0.3, 0.3, 1)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
         gl.enable(gl.DEPTH_TEST)
         gl.enable(gl.CULL_FACE)
