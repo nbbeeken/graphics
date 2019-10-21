@@ -1,3 +1,6 @@
+import * as twgl from "twgl.js"
+const { v3 } = twgl
+
 export const LETTER_F = [
     // left column front
     0, 0, 0,
@@ -113,9 +116,9 @@ export const LETTER_F = [
     0, 150, 0,
 ]
 
-export const LETTER_F_NORMALS = [
-    LETTER_F
-]
+export const LETTER_F_NORMALS: number[] = [...toRectangles(LETTER_F)].map(
+    (rectangle: Rectangle) => Array.from(v3.cross(rectangle[0][0], rectangle[0][1])) as Vec3
+).reduce(repeatItemsReducer<Point>(6), [] as Point[]).flat(2)
 
 export const LETTER_F_COLORS = [
     // left column front
@@ -232,28 +235,75 @@ export const LETTER_F_COLORS = [
     160, 160, 220, 255,
 ]
 
-export type Point = [number, number, number]
-
-export interface Line {
-    p0: Point
-    p1: Point
-}
-
+export type Vec3 = twgl.v3.Vec3
+export type Vec4 = [number, number, number, number]
+export type Color = Vec4
+export type Point = Vec3
 export type Triangle = [Point, Point, Point]
-
 export type Rectangle = [Triangle, Triangle]
 
-var x: Rectangle[] = [
-    [
-        [
-            [1, 2, 3],
-            [1, 2, 3],
-            [1, 2, 3],
-        ],
-        [
-            [1, 2, 3],
-            [1, 2, 3],
-            [1, 2, 3],
-        ],
-    ]
-]
+export function* toTriangles(shape: number[]): Iterable<Triangle> {
+    for (let i = 0; i < shape.length; i += 9) {
+        yield [
+            shape.slice(i + 0, i + 3) as Point,
+            shape.slice(i + 3, i + 6) as Point,
+            shape.slice(i + 6, i + 9) as Point,
+        ]
+    }
+}
+
+export function* toRectangles(shape: number[]): Iterable<Rectangle> {
+    for (let i = 0; i < shape.length; i += 18) {
+        yield [
+            [
+                shape.slice(i + 0, i + 3) as Point,
+                shape.slice(i + 3, i + 6) as Point,
+                shape.slice(i + 6, i + 9) as Point,
+            ],
+            [
+                shape.slice(i + 9, i + 12) as Point,
+                shape.slice(i + 12, i + 15) as Point,
+                shape.slice(i + 15, i + 18) as Point,
+            ],
+        ]
+    }
+}
+
+export function* toPoints(shape: number[]): Iterable<Point> {
+    for (let i = 0; i < shape.length; i += 3) {
+        yield shape.slice(i + 0, i + 3) as Point
+    }
+}
+
+export function* fromRectangles(rectangles: Rectangle[]): Iterable<Triangle> {
+    for (const rectangle of rectangles) {
+        for (const triangle of rectangle) {
+            yield triangle
+        }
+    }
+}
+
+export function* fromTriangles(triangles: Triangle[]): Iterable<Point> {
+    for (const triangle of triangles) {
+        for (const point of triangle) {
+            yield point
+        }
+    }
+}
+
+export function* fromPoints(points: Point[]): Iterable<number> {
+    for (const point of points) {
+        for (const n of point) {
+            yield n
+        }
+    }
+}
+
+function repeatItemsReducer<T>(n: number) {
+    return (accumulator: T[], item: T) => {
+        for (let i = 0; i < n; i++) {
+            accumulator.push(item)
+        }
+        return accumulator
+    }
+}

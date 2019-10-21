@@ -1,4 +1,5 @@
 # Toon Shading
+
 CSE 528 Computer Graphics
 
 ## References

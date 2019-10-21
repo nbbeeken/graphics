@@ -3,7 +3,7 @@ import { resizeCanvas, gl } from "./canvas"
 import * as twgl from "twgl.js"
 import { newProjectionMatrix, translate, rotate, scale } from "./maths"
 import { GUIControls } from "./gui"
-import { LETTER_F, LETTER_F_COLORS } from "./shapes"
+import { LETTER_F, LETTER_F_COLORS, LETTER_F_NORMALS } from "./shapes"
 
 import fs from "../shaders/fs.frag"
 import vs from "../shaders/vs.vert"
@@ -31,6 +31,7 @@ export class Renderer {
         const arrays = {
             position: new Float32Array(LETTER_F),
             color: new Uint8Array(LETTER_F_COLORS),
+            normal: new Float32Array(LETTER_F_NORMALS)
         }
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
     }

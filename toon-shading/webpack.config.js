@@ -53,7 +53,8 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html'
+            template: 'src/index.html',
+            favicon: 'src/favicon.ico'
         }),
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
