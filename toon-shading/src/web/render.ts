@@ -1,7 +1,7 @@
 import Stats from "stats.js"
 import { resizeCanvas, gl } from "./canvas"
 import * as twgl from "twgl.js"
-import { newProjectionMatrix, translate, rotate, scale } from "./maths"
+import * as wglm from "./maths"
 import { GUIControls } from "./gui"
 import { LETTER_F, LETTER_F_COLORS, LETTER_F_NORMALS } from "./shapes"
 
@@ -28,8 +28,11 @@ export class Renderer {
         this.controls = new GUIControls()
         this.programInfo = twgl.createProgramInfo(gl, [vs, fs])
 
+        let maxOfF = Math.max(...LETTER_F)
+        let normalF = LETTER_F.map(p => p / maxOfF)
+
         const arrays = {
-            position: new Float32Array(LETTER_F),
+            position: new Float32Array(normalF),
             color: new Uint8Array(LETTER_F_COLORS),
             normal: new Float32Array(LETTER_F_NORMALS)
         }
@@ -69,14 +72,9 @@ export class Renderer {
     private draw = (thisTime: number, lastTime: number) => {
         const resolution = [gl.canvas.width, gl.canvas.height] as [number, number]
 
-        const projection = newProjectionMatrix(resolution[0], resolution[1], 1000)
-
-        let transform
-        transform = translate(projection, this.controls.translation)
-        transform = rotate(transform, this.controls.rotation)
-        transform = scale(transform, this.controls.scaling)
-
-        // Calc normal
+        const projection = wglm.perspective(45, resolution, 100.0)
+        const view = wglm.translate(wglm.idMat4(), this.controls.translation)
+        const model = wglm.rotate(wglm.idMat4(), this.controls.rotation)
 
         if (this.controls.animate) {
             // Dance
@@ -85,8 +83,11 @@ export class Renderer {
 
         let uniforms = {
             time: thisTime,
+            lightColor: this.controls.color,
             resolution,
-            transform,
+            projection,
+            view,
+            model,
         }
 
         gl.useProgram(this.programInfo.program)

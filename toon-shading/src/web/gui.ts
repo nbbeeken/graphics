@@ -4,9 +4,9 @@ export class GUIControls {
     gui: dat.GUI
     constructor(
         // Translating
-        public translationX: number = 145,
-        public translationY: number = 150,
-        public translationZ: number = 0,
+        public translationX: number = 0,
+        public translationY: number = 0,
+        public translationZ: number = -3.0,
         // Scaling
         public scaleX: number = 1,
         public scaleY: number = 1,
@@ -15,7 +15,7 @@ export class GUIControls {
         public rotationX: number = -30,
         public rotationY: number = 0,
         public rotationZ: number = -40,
-        public colorVec: [number, number, number] = [35, 200, 0],
+        public colorVec: [number, number, number] = [255, 255, 255],
         public colorAlpha: number = 1.0,
 
         public animate: boolean = false,
@@ -25,9 +25,9 @@ export class GUIControls {
         this.gui.add(this, 'animate')
 
         const translationFolder = this.gui.addFolder('translation')
-        translationFolder.add(this, 'translationX', 0, 1000)
-        translationFolder.add(this, 'translationY', 0, 1000)
-        translationFolder.add(this, 'translationZ', -1000, 1000)
+        translationFolder.add(this, 'translationX', -3, 3, 0.01)
+        translationFolder.add(this, 'translationY', -3, 3, 0.01)
+        translationFolder.add(this, 'translationZ', -6, 0, 0.01)
 
         const scaleFolder = this.gui.addFolder('scale')
         scaleFolder.add(this, 'scaleX', -5, 5).listen()

@@ -1,6 +1,10 @@
 import * as twgl from "twgl.js"
 const { m4 } = twgl
 
+export function idMat4() {
+    return m4.identity()
+}
+
 export function radianToDegree(radians: number) {
     return radians * 180 / Math.PI
 }
@@ -9,8 +13,8 @@ export function degreeToRadian(degree: number) {
     return degree * Math.PI / 180
 }
 
-export function newProjectionMatrix(width: number, height: number, depth: number) {
-    return m4.ortho(0, width, height, 0, depth, -depth) as number[]
+export function perspective(angle: number, [width, height]: [number, number], depth: number = 100.0) {
+    return m4.perspective(degreeToRadian(angle), width / height, 0.1, depth)
 }
 
 export function translate(matrix: number[] | Float32List, translation: [number, number, number]) {
