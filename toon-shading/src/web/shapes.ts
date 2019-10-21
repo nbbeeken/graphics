@@ -1,15 +1,11 @@
 export const LETTER_F = [
     // left column front
-    [
-        [
-            [0, 0, 0],
-            [0, 150, 0],
-            [30, 0, 0],
-        ],
-        0, 150, 0,
-        30, 150, 0,
-        30, 0, 0,
-    ],
+    0, 0, 0,
+    0, 150, 0,
+    30, 0, 0,
+    0, 150, 0,
+    30, 150, 0,
+    30, 0, 0,
     // top rung front
     30, 0, 0,
     30, 30, 0,
@@ -236,50 +232,7 @@ export const LETTER_F_COLORS = [
     160, 160, 220, 255,
 ]
 
-export class Point {
-    private _0: number
-    private _1: number
-    private _2: number
-    get '0'() { return this._0 }
-    get '1'() { return this._1 }
-    get '2'() { return this._2 }
-    set '0'(value: number) { this._0 = value }
-    set '1'(value: number) { this._1 = value }
-    set '2'(value: number) { this._2 = value }
-    get x() { return this[0] }
-    get y() { return this[1] }
-    get z() { return this[2] }
-    get xy() { return [this[0], this[1]] }
-    get xz() { return [this[0], this[2]] }
-    get yz() { return [this[1], this[2]] }
-    get xyz() { return this as unknown as [number, number, number] }
-    set x(value: number) { this[0] = value }
-    set y(value: number) { this[1] = value }
-    set z(value: number) { this[2] = value }
-    set xy([x, y]: [number, number]) { this[0] = x; this[1] = y }
-    set xz([x, z]: [number, number]) { this[0] = x; this[2] = z }
-    set yz([y, z]: [number, number]) { this[1] = y; this[2] = z }
-    set xyz([x, y, z]: [number, number, number]) { this[0] = x; this[1] = y; this[2] = z }
-    constructor([x, y, z]: [number, number, number]) {
-        this._0 = x
-        this._1 = y
-        this._2 = z
-        Object.defineProperty(this, '_0', { enumerable: false })
-        Object.defineProperty(this, '_1', { enumerable: false })
-        Object.defineProperty(this, '_2', { enumerable: false })
-    }
-    *[Symbol.iterator]() {
-        yield this._0
-        yield this._1
-        yield this._2
-    }
-    [Symbol.toStringTag]() {
-        return 'Point'
-    }
-    toString() {
-        return `{x: ${this._0}, y: ${this._1}, z: ${this._2}}`
-    }
-}
+export type Point = [number, number, number]
 
 export interface Line {
     p0: Point
@@ -293,14 +246,14 @@ export type Rectangle = [Triangle, Triangle]
 var x: Rectangle[] = [
     [
         [
-            new Point([1, 2, 3]),
-            new Point([1, 2, 3]),
-            new Point([1, 2, 3]),
+            [1, 2, 3],
+            [1, 2, 3],
+            [1, 2, 3],
         ],
         [
-            new Point([1, 2, 3]),
-            new Point([1, 2, 3]),
-            new Point([1, 2, 3]),
+            [1, 2, 3],
+            [1, 2, 3],
+            [1, 2, 3],
         ],
     ]
 ]
