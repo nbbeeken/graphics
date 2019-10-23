@@ -7,6 +7,10 @@ export class GUIControls {
         public translationX: number = 0,
         public translationY: number = 0,
         public translationZ: number = -3.0,
+        // Light Positioning
+        public lightPositionX: number = 0,
+        public lightPositionY: number = 0,
+        public lightPositionZ: number = -3.0,
         // Scaling
         public scaleX: number = 1,
         public scaleY: number = 1,
@@ -28,6 +32,11 @@ export class GUIControls {
         translationFolder.add(this, 'translationX', -3, 3, 0.01)
         translationFolder.add(this, 'translationY', -3, 3, 0.01)
         translationFolder.add(this, 'translationZ', -6, 0, 0.01)
+
+        const lightPositionFolder = this.gui.addFolder('light position')
+        lightPositionFolder.add(this, 'lightPositionX', -3, 3, 0.01)
+        lightPositionFolder.add(this, 'lightPositionY', -3, 3, 0.01)
+        lightPositionFolder.add(this, 'lightPositionZ', -6, 0, 0.01)
 
         const scaleFolder = this.gui.addFolder('scale')
         scaleFolder.add(this, 'scaleX', -5, 5).listen()
@@ -56,6 +65,10 @@ export class GUIControls {
     get color(): [number, number, number, number] {
         return [...this.colorVec.slice(0, 3).map(v => v / 255), this.colorAlpha] as [number, number, number, number]
     }
+    get lightPosition() {
+        return [this.lightPositionX, this.lightPositionY, this.lightPositionZ,]
+    }
+
 
     rotationAnimation() {
         this.rotationX += 1

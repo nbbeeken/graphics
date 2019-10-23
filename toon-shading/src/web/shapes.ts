@@ -1,124 +1,60 @@
 import * as twgl from "twgl.js"
 const { v3 } = twgl
 
-export const LETTER_F = [
+export const LETTER_F: Triangle[] = [
     // left column front
-    0, 0, 0,
-    0, 150, 0,
-    30, 0, 0,
-    0, 150, 0,
-    30, 150, 0,
-    30, 0, 0,
+    [[0, 0, 0], [0, 1, 0], [0.2, 0, 0]],
+    [[0, 1, 0], [0.2, 1, 0], [0.2, 0, 0]],
     // top rung front
-    30, 0, 0,
-    30, 30, 0,
-    100, 0, 0,
-    30, 30, 0,
-    100, 30, 0,
-    100, 0, 0,
+    [[0.2, 0, 0], [0.2, 0.2, 0], [0.6667, 0, 0]],
+    [[0.2, 0.2, 0], [0.6667, 0.2, 0], [0.6667, 0, 0]],
     // middle rung front
-    30, 60, 0,
-    30, 90, 0,
-    67, 60, 0,
-    30, 90, 0,
-    67, 90, 0,
-    67, 60, 0,
+    [[0.2, 0.4, 0], [0.2, 0.6, 0], [0.44667, 0.4, 0]],
+    [[0.2, 0.6, 0], [0.44667, 0.6, 0], [0.44667, 0.4, 0]],
     // left column back
-    0, 0, 30,
-    30, 0, 30,
-    0, 150, 30,
-    0, 150, 30,
-    30, 0, 30,
-    30, 150, 30,
+    [[0, 0, 0.2], [0.2, 0, 0.2], [0, 1, 0.2]],
+    [[0, 1, 0.2], [0.2, 0, 0.2], [0.2, 1, 0.2]],
     // top rung back
-    30, 0, 30,
-    100, 0, 30,
-    30, 30, 30,
-    30, 30, 30,
-    100, 0, 30,
-    100, 30, 30,
-    // middle rung back
-    30, 60, 30,
-    67, 60, 30,
-    30, 90, 30,
-    30, 90, 30,
-    67, 60, 30,
-    67, 90, 30,
+    [[0.2, 0, 0.2], [0.6667, 0, 0.2], [0.2, 0.2, 0.2]],
+    [[0.2, 0.2, 0.2], [0.6667, 0, 0.2], [0.6667, 0.2, 0.2]],
+    // middle run back
+    [[0.2, 0.4, 0.2], [0.44667, 0.4, 0.2], [0.2, 0.6, 0.2]],
+    [[0.2, 0.6, 0.2], [0.44667, 0.4, 0.2], [0.44667, 0.6, 0.2]],
     // top
-    0, 0, 0,
-    100, 0, 0,
-    100, 0, 30,
-    0, 0, 0,
-    100, 0, 30,
-    0, 0, 30,
+    [[0, 0, 0], [0.6667, 0, 0], [0.6667, 0, 0.2]],
+    [[0, 0, 0], [0.6667, 0, 0.2], [0, 0, 0.2]],
     // top rung right
-    100, 0, 0,
-    100, 30, 0,
-    100, 30, 30,
-    100, 0, 0,
-    100, 30, 30,
-    100, 0, 30,
+    [[0.6667, 0, 0], [0.6667, 0.2, 0], [0.6667, 0.2, 0.2]],
+    [[0.6667, 0, 0], [0.6667, 0.2, 0.2], [0.6667, 0, 0.2]],
     // under top rung
-    30, 30, 0,
-    30, 30, 30,
-    100, 30, 30,
-    30, 30, 0,
-    100, 30, 30,
-    100, 30, 0,
+    [[0.2, 0.2, 0], [0.2, 0.2, 0.2], [0.6667, 0.2, 0.2]],
+    [[0.2, 0.2, 0], [0.6667, 0.2, 0.2], [0.6667, 0.2, 0]],
     // between top rung and middle
-    30, 30, 0,
-    30, 60, 30,
-    30, 30, 30,
-    30, 30, 0,
-    30, 60, 0,
-    30, 60, 30,
+    [[0.2, 0.2, 0], [0.2, 0.4, 0.2], [0.2, 0.2, 0.2]],
+    [[0.2, 0.2, 0], [0.2, 0.4, 0], [0.2, 0.4, 0.2]],
     // top of middle rung
-    30, 60, 0,
-    67, 60, 30,
-    30, 60, 30,
-    30, 60, 0,
-    67, 60, 0,
-    67, 60, 30,
+    [[0.2, 0.4, 0], [0.44667, 0.4, 0.2], [0.2, 0.4, 0.2]],
+    [[0.2, 0.4, 0], [0.44667, 0.4, 0], [0.44667, 0.4, 0.2]],
     // right of middle rung
-    67, 60, 0,
-    67, 90, 30,
-    67, 60, 30,
-    67, 60, 0,
-    67, 90, 0,
-    67, 90, 30,
-    // bottom of middle rung.
-    30, 90, 0,
-    30, 90, 30,
-    67, 90, 30,
-    30, 90, 0,
-    67, 90, 30,
-    67, 90, 0,
+    [[0.44667, 0.4, 0], [0.44667, 0.6, 0.2], [0.44667, 0.4, 0.2]],
+    [[0.44667, 0.4, 0], [0.44667, 0.6, 0], [0.44667, 0.6, 0.2]],
+    // bottom of middle rung
+    [[0.2, 0.6, 0], [0.2, 0.6, 0.2], [0.44667, 0.6, 0.2]],
+    [[0.2, 0.6, 0], [0.44667, 0.6, 0.2], [0.44667, 0.6, 0]],
     // right of bottom
-    30, 90, 0,
-    30, 150, 30,
-    30, 90, 30,
-    30, 90, 0,
-    30, 150, 0,
-    30, 150, 30,
+    [[0.2, 0.6, 0], [0.2, 1, 0.2], [0.2, 0.6, 0.2]],
+    [[0.2, 0.6, 0], [0.2, 1, 0], [0.2, 1, 0.2]],
     // bottom
-    0, 150, 0,
-    0, 150, 30,
-    30, 150, 30,
-    0, 150, 0,
-    30, 150, 30,
-    30, 150, 0,
+    [[0, 1, 0], [0, 1, 0.2], [0.2, 1, 0.2]],
+    [[0, 1, 0], [0.2, 1, 0.2], [0.2, 1, 0]],
     // left side
-    0, 0, 0,
-    0, 0, 30,
-    0, 150, 30,
-    0, 0, 0,
-    0, 150, 30,
-    0, 150, 0,
+    [[0, 0, 0], [0, 0, 0.2], [0, 1, 0.2]],
+    [[0, 0, 0], [0, 1, 0.2], [0, 1, 0]]
 ]
 
-export const LETTER_F_NORMALS: number[] = [...toRectangles(LETTER_F)].map(
-    (rectangle: Rectangle) => Array.from(v3.cross(rectangle[0][0], rectangle[0][1])) as Vec3
-).reduce(repeatItemsReducer<Point>(6), [] as Point[]).flat(2)
+export const LETTER_F_NORMALS: Point[] = LETTER_F.map(
+    (triangle: Triangle) => Array.from(v3.cross(triangle[0], triangle[1])) as Point
+).reduce(repeatItemsReducer<Point>(3), [] as Point[])
 
 export const LETTER_F_COLORS = [
     // left column front
@@ -240,7 +176,6 @@ export type Vec4 = [number, number, number, number]
 export type Color = Vec4
 export type Point = Vec3
 export type Triangle = [Point, Point, Point]
-export type Rectangle = [Triangle, Triangle]
 
 export function* toTriangles(shape: number[]): Iterable<Triangle> {
     for (let i = 0; i < shape.length; i += 9) {
@@ -252,38 +187,13 @@ export function* toTriangles(shape: number[]): Iterable<Triangle> {
     }
 }
 
-export function* toRectangles(shape: number[]): Iterable<Rectangle> {
-    for (let i = 0; i < shape.length; i += 18) {
-        yield [
-            [
-                shape.slice(i + 0, i + 3) as Point,
-                shape.slice(i + 3, i + 6) as Point,
-                shape.slice(i + 6, i + 9) as Point,
-            ],
-            [
-                shape.slice(i + 9, i + 12) as Point,
-                shape.slice(i + 12, i + 15) as Point,
-                shape.slice(i + 15, i + 18) as Point,
-            ],
-        ]
-    }
-}
-
 export function* toPoints(shape: number[]): Iterable<Point> {
     for (let i = 0; i < shape.length; i += 3) {
         yield shape.slice(i + 0, i + 3) as Point
     }
 }
 
-export function* fromRectangles(rectangles: Rectangle[]): Iterable<Triangle> {
-    for (const rectangle of rectangles) {
-        for (const triangle of rectangle) {
-            yield triangle
-        }
-    }
-}
-
-export function* fromTriangles(triangles: Triangle[]): Iterable<Point> {
+export function* fromTriangles(triangles: Iterable<Triangle>): Iterable<Point> {
     for (const triangle of triangles) {
         for (const point of triangle) {
             yield point
@@ -291,7 +201,7 @@ export function* fromTriangles(triangles: Triangle[]): Iterable<Point> {
     }
 }
 
-export function* fromPoints(points: Point[]): Iterable<number> {
+export function* fromPoints(points: Iterable<Point>): Iterable<number> {
     for (const point of points) {
         for (const n of point) {
             yield n

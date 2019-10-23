@@ -1,9 +1,9 @@
 import Stats from "stats.js"
 import { resizeCanvas, gl } from "./canvas"
 import * as twgl from "twgl.js"
-import * as wglm from "./maths"
+import * as wglm from "./maths" // web gl math
 import { GUIControls } from "./gui"
-import { LETTER_F, LETTER_F_COLORS, LETTER_F_NORMALS } from "./shapes"
+import { LETTER_F, LETTER_F_COLORS, LETTER_F_NORMALS, fromPoints, fromTriangles } from "./shapes"
 
 import fs from "../shaders/fs.frag"
 import vs from "../shaders/vs.vert"
@@ -28,13 +28,10 @@ export class Renderer {
         this.controls = new GUIControls()
         this.programInfo = twgl.createProgramInfo(gl, [vs, fs])
 
-        let maxOfF = Math.max(...LETTER_F)
-        let normalF = LETTER_F.map(p => p / maxOfF)
-
         const arrays = {
-            position: new Float32Array(normalF),
+            position: new Float32Array(fromPoints(fromTriangles(LETTER_F))),
+            normal: new Float32Array(fromPoints(LETTER_F_NORMALS)),
             color: new Uint8Array(LETTER_F_COLORS),
-            normal: new Float32Array(LETTER_F_NORMALS)
         }
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
     }
@@ -84,6 +81,7 @@ export class Renderer {
         let uniforms = {
             time: thisTime,
             lightColor: this.controls.color,
+            lightPosition: this.controls.lightPosition,
             resolution,
             projection,
             view,
