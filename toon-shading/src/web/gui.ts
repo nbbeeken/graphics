@@ -16,9 +16,9 @@ export class GUIControls {
         public scaleY: number = 1,
         public scaleZ: number = 1,
         // Rotating
-        public rotationX: number = -30,
-        public rotationY: number = 0,
-        public rotationZ: number = -40,
+        public rotationX: number = 30,
+        public rotationY: number = 50,
+        public rotationZ: number = 40,
         public colorVec: [number, number, number] = [255, 255, 255],
         public colorAlpha: number = 1.0,
 
@@ -65,7 +65,7 @@ export class GUIControls {
     get color(): [number, number, number, number] {
         return [...this.colorVec.slice(0, 3).map(v => v / 255), this.colorAlpha] as [number, number, number, number]
     }
-    get lightPosition() {
+    get lightPosition(): [number, number, number] {
         return [this.lightPositionX, this.lightPositionY, this.lightPositionZ,]
     }
 

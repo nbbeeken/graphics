@@ -12,13 +12,22 @@ const stats = new Stats()
 stats.showPanel(0)
 document.body.appendChild(stats.dom)
 
+interface Object3D {
+    bufferInfo: twgl.BufferInfo
+    getUniforms: (thisTime: number, resolution: [number, number]) => {
+        time: number
+        resolution: [number, number]
+        [k: string]: number | number[] | Float32Array
+    }
+}
+
 export class Renderer {
 
     lastTime: number = 0
     controls: GUIControls
     animationId?: number
     public programInfo: twgl.ProgramInfo
-    public bufferInfo: twgl.BufferInfo
+    public objects: Object3D[]
 
     /**
      * Renderer class to scope variables needed in requestAnimationFrame into a class
@@ -28,12 +37,35 @@ export class Renderer {
         this.controls = new GUIControls()
         this.programInfo = twgl.createProgramInfo(gl, [vs, fs])
 
-        const arrays = {
-            position: new Float32Array(fromPoints(fromTriangles(LETTER_F))),
-            normal: new Float32Array(fromPoints(LETTER_F_NORMALS)),
-            color: new Uint8Array(LETTER_F_COLORS),
-        }
-        this.bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
+        this.objects = [{
+            getUniforms: (time, resolution) => ({
+                time,
+                resolution,
+                lightColor: this.controls.color,
+                lightPosition: this.controls.lightPosition,
+                projection: wglm.perspective(45, resolution, 100.0),
+                view: wglm.translate(wglm.idMat4(), this.controls.translation),
+                model: wglm.rotate(wglm.idMat4(), this.controls.rotation),
+
+            }),
+            bufferInfo: twgl.createBufferInfoFromArrays(gl, {
+                position: new Float32Array(fromPoints(fromTriangles(LETTER_F))),
+                normal: new Float32Array(fromPoints(LETTER_F_NORMALS)),
+                color: new Uint8Array(LETTER_F_COLORS),
+            })
+        }]
+        this.objects.push({
+            bufferInfo: twgl.createBufferInfoFromArrays(gl, {
+                ...twgl.primitives.createCubeVertices(0.05),
+                color: (new Array(24).fill(undefined).map(_ => [255, 255, 255, 255])).flat()
+            }),
+            getUniforms: (time, resolution) => ({
+                time,
+                resolution,
+                projection: wglm.perspective(45, resolution, 100.0),
+                view: wglm.translate(wglm.idMat4(), this.controls.lightPosition)
+            })
+        })
     }
 
     start() {
@@ -69,28 +101,17 @@ export class Renderer {
     private draw = (thisTime: number, lastTime: number) => {
         const resolution = [gl.canvas.width, gl.canvas.height] as [number, number]
 
-        const projection = wglm.perspective(45, resolution, 100.0)
-        const view = wglm.translate(wglm.idMat4(), this.controls.translation)
-        const model = wglm.rotate(wglm.idMat4(), this.controls.rotation)
-
         if (this.controls.animate) {
             // Dance
             this.controls.rotationAnimation()
         }
 
-        let uniforms = {
-            time: thisTime,
-            lightColor: this.controls.color,
-            lightPosition: this.controls.lightPosition,
-            resolution,
-            projection,
-            view,
-            model,
-        }
-
         gl.useProgram(this.programInfo.program)
-        twgl.setBuffersAndAttributes(gl, this.programInfo, this.bufferInfo)
-        twgl.setUniforms(this.programInfo, uniforms)
-        twgl.drawBufferInfo(gl, this.bufferInfo)
+
+        for (const object of this.objects) {
+            twgl.setBuffersAndAttributes(gl, this.programInfo, object.bufferInfo)
+            twgl.setUniforms(this.programInfo, object.getUniforms(thisTime, resolution))
+            twgl.drawBufferInfo(gl, object.bufferInfo)
+        }
     }
 }

@@ -52,9 +52,16 @@ export const LETTER_F: Triangle[] = [
     [[0, 0, 0], [0, 1, 0.2], [0, 1, 0]]
 ]
 
-export const LETTER_F_NORMALS: Point[] = LETTER_F.map(
-    (triangle: Triangle) => Array.from(v3.cross(triangle[0], triangle[1])) as Point
-).reduce(repeatItemsReducer<Point>(3), [] as Point[])
+export const LETTER_F_NORMALS: Vec3[] = (LETTER_F
+    .map((triangle: Triangle, index: number) => {
+        if (index % 2 === 0) {
+            return Array.from(v3.cross(triangle[1], triangle[2])) as Vec3
+        } else {
+            return false
+        }
+    })
+    .filter((v: Vec3 | false) => v as Vec3) as Vec3[])
+    .reduce(repeatItemsReducer<Vec3>(6), [] as Vec3[])
 
 export const LETTER_F_COLORS = [
     // left column front
