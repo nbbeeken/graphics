@@ -5,7 +5,6 @@
     "description": "2D Shading pipeline",
     "type": "module",
     "scripts": {
-        "postinstall": "node --experimental-modules --no-warnings scripts.js postinstall",
         "clean": "node --experimental-modules --no-warnings scripts.js clean",
         "build:dev": "webpack --mode=development",
         "start:dev": "webpack-dev-server --mode=development",
@@ -31,7 +30,6 @@
         "html-webpack-plugin": "3.2.0",
         "mini-css-extract-plugin": "0.8.0",
         "raw-loader": "3.1.0",
-        "rimraf": "3.0.0",
         "ts-loader": "6.2.0",
         "typescript": "3.7.0-beta",
         "webpack": "4.41.2",

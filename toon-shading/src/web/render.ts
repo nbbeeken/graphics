@@ -14,7 +14,7 @@ document.body.appendChild(stats.dom)
 
 interface Object3D {
     bufferInfo: twgl.BufferInfo
-    getUniforms: (thisTime: number, resolution: [number, number]) => {
+    getUniforms: (time: number, resolution: [number, number]) => {
         time: number
         resolution: [number, number]
         [k: string]: number | number[] | Float32Array
@@ -37,8 +37,13 @@ export class Renderer {
         this.controls = new GUIControls()
         this.programInfo = twgl.createProgramInfo(gl, [vs, fs])
 
-        this.objects = [{
-            getUniforms: (time, resolution) => ({
+        this.objects = [this.makeF()]
+        this.objects.push(this.makeLightCube())
+    }
+
+    makeF(): Object3D {
+        return {
+            getUniforms: (time: number, resolution: [number, number]) => ({
                 time,
                 resolution,
                 lightColor: this.controls.color,
@@ -53,8 +58,11 @@ export class Renderer {
                 normal: new Float32Array(fromPoints(LETTER_F_NORMALS)),
                 color: new Uint8Array(LETTER_F_COLORS),
             })
-        }]
-        this.objects.push({
+        }
+    }
+
+    makeLightCube(): Object3D {
+        return {
             bufferInfo: twgl.createBufferInfoFromArrays(gl, {
                 ...twgl.primitives.createCubeVertices(0.05),
                 color: (new Array(24).fill(undefined).map(_ => [255, 255, 255, 255])).flat()
@@ -65,7 +73,7 @@ export class Renderer {
                 projection: wglm.perspective(45, resolution, 100.0),
                 view: wglm.translate(wglm.idMat4(), this.controls.lightPosition)
             })
-        })
+        }
     }
 
     start() {
