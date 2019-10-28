@@ -8,9 +8,9 @@ export class GUIControls {
         public translationY: number = 0,
         public translationZ: number = -3.0,
         // Light Positioning
-        public lightPositionX: number = 0,
-        public lightPositionY: number = 0,
-        public lightPositionZ: number = -3.0,
+        public lightPositionX: number = -2.5,
+        public lightPositionY: number = -2.5,
+        public lightPositionZ: number = -1.0,
         // Scaling
         public scaleX: number = 1,
         public scaleY: number = 1,
