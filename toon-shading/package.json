@@ -38,8 +38,9 @@
         "webpack-stylish": "0.1.8"
     },
     "dependencies": {
-        "twgl.js": "4.11.4",
+        "dat.gui": "0.7.6",
         "stats.js": "0.17.0",
-        "dat.gui": "0.7.6"
+        "three.js": "^0.77.1",
+        "twgl.js": "4.11.4"
     }
 }
