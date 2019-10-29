@@ -3,7 +3,9 @@ const path = require('path')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const webpack = require('webpack')
+// @ts-ignore
 const Stylish = require('webpack-stylish')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 /** @type { import('webpack').Configuration } */
 const config = {
@@ -14,6 +16,13 @@ const config = {
         writeToDisk: true,
         compress: false,
         port: 1234,
+    },
+    optimization: {
+        sideEffects: true
+    },
+    performance: {
+        maxAssetSize: 700000,
+        maxEntrypointSize: 700000
     },
     module: {
         rules: [
@@ -52,10 +61,12 @@ const config = {
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
+        // @ts-ignore
         new HtmlWebpackPlugin({
             template: 'src/index.html',
             favicon: 'src/favicon.ico'
         }),
+        // @ts-ignore
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // all options are optional
@@ -63,6 +74,8 @@ const config = {
             chunkFilename: '[id].css',
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
+        // @ts-ignore
+        new CompressionPlugin(),
         new webpack.NamedModulesPlugin(),
         new Stylish()
     ]

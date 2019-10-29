@@ -6,7 +6,7 @@ export class GUIControls {
         // Translating
         public translationX: number = 0,
         public translationY: number = 0,
-        public translationZ: number = -3.0,
+        public translationZ: number = 0,
         // Light Positioning
         public lightPositionX: number = -2.5,
         public lightPositionY: number = -2.5,
