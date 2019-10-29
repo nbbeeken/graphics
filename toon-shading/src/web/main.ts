@@ -1,17 +1,16 @@
-import { Color, Mesh, PerspectiveCamera, Scene, ShaderMaterial, SphereGeometry, WebGLRenderer } from "three"
+import { Color, Mesh, PerspectiveCamera, Scene, ShaderMaterial, SphereGeometry, Vector2, Vector3, WebGLRenderer } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import fragmentShader from "../shaders/fs.frag"
-import vertexShader from "../shaders/vs.vert"
 import { gl } from './canvas'
 import { GUIControls } from './gui'
-import { Painter } from "./painter"
+import { fragmentShader, Painter, vertexShader } from "./painter"
+import { normalize } from "./utils"
 
 const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 const renderer = new WebGLRenderer({ canvas: gl.canvas, context: gl })
-const controls = new GUIControls()
+const gui = new GUIControls()
 
 export function main() {
     renderer.setSize(window.innerWidth, window.innerHeight)
@@ -19,32 +18,34 @@ export function main() {
 
     window.addEventListener('resize', onResize)
 
-    const geometry = new SphereGeometry(2, 32, 32)
+    const geometry = new SphereGeometry(2, 8, 8)
     const material = createCustomMaterial()
 
     const cube = new Mesh(geometry, material)
     scene.add(cube)
 
-    const viewControls = new OrbitControls(camera, renderer.domElement)
-    viewControls.update()
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.update()
 
     camera.position.z = 5
 
+    let v = 0.0
+    let dv = 0.005
+    cube.onBeforeRender = () => {
+        const lightColor = new Color(...normalize(gui.color, 255))
+        material.uniforms.resolution.value = new Vector2(...resolution())
+        material.uniforms.lightColor.value = lightColor
+        material.uniforms.lightPosition.value = new Vector3(...gui.lightPosition)
+        material.uniforms.ambientStrength.value = v
+
+        if (v > 1) { dv = -dv }
+        if (v < 0) { dv = -dv }
+
+        v += dv
+    }
+
     function animate() {
-
-        material.uniforms = {
-            resolution: { value: resolution() },
-            lightColor: { value: controls.color },
-            lightPosition: { value: controls.lightPosition },
-        }
-        cube.translateX(controls.translationX)
-        cube.translateY(controls.translationY)
-        cube.translateZ(controls.translationZ)
-        cube.rotation.x += 0.01
-        cube.rotation.y += 0.01
-        cube.rotation.z += 0.001
-
-        viewControls.update()
+        controls.update()
 
         renderer.render(scene, camera)
         requestAnimationFrame(animate)
@@ -59,15 +60,12 @@ function createCustomMaterial() {
         fragmentShader,
         vertexShader,
         uniforms: {
-            resolution: { value: resolution() },
-            lightColor: { value: controls.color },
-            lightPosition: { value: controls.lightPosition },
-        },
-        map: painter.texture
-    } as any)
-    material.uniforms.map = { value: painter.texture };
-    (material as any).map = painter.texture
-
+            resolution: { value: new Vector2(...resolution()) },
+            lightColor: { value: new Color(...gui.color) },
+            lightPosition: { value: new Vector3(...gui.lightPosition) },
+            ambientStrength: { value: 0.0 }
+        }
+    })
     return material
 }
 

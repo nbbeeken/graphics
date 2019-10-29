@@ -19,8 +19,7 @@ export class GUIControls {
         public rotationX: number = 30,
         public rotationY: number = 50,
         public rotationZ: number = 40,
-        public colorVec: [number, number, number] = [255, 255, 255],
-        public colorAlpha: number = 1.0,
+        public color: [number, number, number] = [25, 255, 25],
 
         public animate: boolean = false,
     ) {
@@ -49,8 +48,7 @@ export class GUIControls {
         rotationFolder.add(this, 'rotationZ', -180, 180).listen()
 
         const colorFolder = this.gui.addFolder('color')
-        colorFolder.addColor(this, 'colorVec')
-        colorFolder.add(this, 'colorAlpha', 0, 1, 0.01)
+        colorFolder.addColor(this, 'color').listen()
     }
 
     get translation(): [number, number, number] {
@@ -61,9 +59,6 @@ export class GUIControls {
     }
     get rotation() {
         return { x: this.rotationX, y: this.rotationY, z: this.rotationZ }
-    }
-    get color(): [number, number, number, number] {
-        return [...this.colorVec.slice(0, 3).map(v => v / 255), this.colorAlpha] as [number, number, number, number]
     }
     get lightPosition(): [number, number, number] {
         return [this.lightPositionX, this.lightPositionY, this.lightPositionZ,]
