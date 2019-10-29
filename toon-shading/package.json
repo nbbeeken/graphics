@@ -25,6 +25,7 @@
     "devDependencies": {
         "@types/dat.gui": "0.7.5",
         "@types/stats.js": "0.17.0",
+        "@types/three": "^0.103.2",
         "@types/webpack": "4.39.3",
         "css-loader": "3.2.0",
         "glslify-loader": "2.0.0",
@@ -42,7 +43,7 @@
     "dependencies": {
         "dat.gui": "0.7.6",
         "stats.js": "0.17.0",
-        "three.js": "^0.77.1",
+        "three": "^0.109.0",
         "twgl.js": "4.11.4"
     }
 }
