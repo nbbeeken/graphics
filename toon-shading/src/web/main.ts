@@ -1,4 +1,4 @@
-import { Color, Mesh, PerspectiveCamera, Scene, ShaderMaterial, SphereGeometry, Vector2, Vector3, WebGLRenderer } from "three"
+import { Color, Mesh, PerspectiveCamera, Scene, ShaderMaterial, SphereGeometry, Vector2, Vector3, WebGLRenderer, MeshBasicMaterial, DataTexture, RGBFormat, FloatType, FlatShading, BoxGeometry, RGBAFormat, UnsignedByteType, DodecahedronGeometry, TorusKnotGeometry } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { gl } from './canvas'
 import { GUIControls } from './gui'
@@ -11,15 +11,16 @@ const scene = new Scene()
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 const renderer = new WebGLRenderer({ canvas: gl.canvas, context: gl })
 const gui = new GUIControls()
+const BACKGROUND = new Color(0.2, 0.3, 0.3)
 
 export function main() {
     renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.setClearColor(new Color(0.2, 0.3, 0.3))
+    renderer.setClearColor(BACKGROUND)
 
     window.addEventListener('resize', onResize)
 
-    const geometry = new SphereGeometry(2, 8, 8)
-    const material = createCustomMaterial()
+    const geometry = new TorusKnotGeometry(1, 0.3)
+    const material = createCustomMaterial() // new MeshBasicMaterial({ color: 'red', map: painter.illuminatedTexture })
 
     const cube = new Mesh(geometry, material)
     scene.add(cube)
@@ -32,15 +33,17 @@ export function main() {
     let v = 0.0
     let dv = 0.005
     cube.onBeforeRender = () => {
-        const lightColor = new Color(...normalize(gui.color, 255))
+        const texture = new DataTexture(new Uint8Array([
+            ...gui.color,
+            ...[gui.color[0] - 25, gui.color[1] - 25, gui.color[2] - 25],
+        ]), 2, 1, RGBFormat, UnsignedByteType)
         material.uniforms.resolution.value = new Vector2(...resolution())
-        material.uniforms.lightColor.value = lightColor
         material.uniforms.lightPosition.value = new Vector3(...gui.lightPosition)
         material.uniforms.ambientStrength.value = v
+        material.uniforms.myTexture.value = texture
 
         if (v > 1) { dv = -dv }
         if (v < 0) { dv = -dv }
-
         v += dv
     }
 
@@ -54,18 +57,26 @@ export function main() {
 }
 
 function createCustomMaterial() {
-    const painter = new Painter()
+    // const painter = new Painter()
+    // painter.scribble()
+    // painter.showCanvases()
+    const texture = new DataTexture(new Uint8Array([
+        ...gui.color,
+        ...[gui.color[0] - 25, gui.color[1] - 25, gui.color[2] - 25],
+    ]), 2, 1, RGBFormat, UnsignedByteType)
     const material = new ShaderMaterial({
         name: 'toonShader',
         fragmentShader,
         vertexShader,
         uniforms: {
             resolution: { value: new Vector2(...resolution()) },
-            lightColor: { value: new Color(...gui.color) },
             lightPosition: { value: new Vector3(...gui.lightPosition) },
-            ambientStrength: { value: 0.0 }
-        }
+            ambientStrength: { value: 0.0 },
+            myTexture: { value: texture },
+        },
+
     })
+    material.needsUpdate = true
     return material
 }
 

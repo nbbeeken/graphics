@@ -5,7 +5,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const webpack = require('webpack')
 // @ts-ignore
 const Stylish = require('webpack-stylish')
-const CompressionPlugin = require('compression-webpack-plugin')
 
 /** @type { import('webpack').Configuration } */
 const config = {
@@ -75,7 +74,6 @@ const config = {
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
         // @ts-ignore
-        new CompressionPlugin(),
         new webpack.NamedModulesPlugin(),
         new Stylish()
     ]
