@@ -5,3 +5,8 @@ export function showError(message?: string): never {
     document.body.prepend(errorH3)
     throw new Error(message || 'Unknown error')
 }
+
+export function normalize(array: number[], normalizer?: number) {
+    const maxValue = normalizer ? normalizer : Math.max(...array)
+    return array.map(v => v / maxValue)
+}
