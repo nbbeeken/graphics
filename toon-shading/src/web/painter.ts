@@ -72,6 +72,7 @@ export const fragmentShader = `
 // Uniforms
 uniform vec2 resolution;
 uniform float time;
+
 uniform vec3 lightPosition;
 uniform float ambientStrength;
 uniform sampler2D myTexture;
@@ -100,20 +101,20 @@ void main() {
 
     vec3 normal = normalize(vertexNormal); // n_bar
     vec3 lightDirection = normalize(lightPosition - vertexPosition); // l_bar
-    float cosAngIncidence = max(
-        dot(normal, lightDirection), 0.0
+    float cosAngIncidence = clamp(
+        dot(normal, lightDirection), 0.0, 1.0
     );
 
-    vec3 diffuse;
+    vec3 colorToShadeIn;
     if (cosAngIncidence > 0.5) {
         // light
-        diffuse = vec3(illuminatedColor);
+        colorToShadeIn = vec3(illuminatedColor);
     } else {
         // shade
-        diffuse = vec3(shadedColor);
+        colorToShadeIn = vec3(shadedColor);
     }
 
-    gl_FragColor = vec4(diffuse, 1.0f);
+    gl_FragColor = vec4(colorToShadeIn, 1.0f);
 }
 
 vec4 lakesShading(vec3 normal, vec3 lightPosition) {
