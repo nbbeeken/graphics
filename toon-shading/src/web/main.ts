@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { gl } from './canvas'
 import { GUIControls } from './gui'
 import { fragmentShader, vertexShader } from "./painter"
+import { LakeParameters, calcColorIlluminated, calcColorShadowed } from "./lakes"
 
 const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 
@@ -27,31 +28,38 @@ export function main() {
 
     window.addEventListener('resize', onResize)
 
+    // Select initial geometry and create material
     let geo = geoSelector(gui.geometry)
     const geometry = new (geo.g)(...geo.args)
     const material = createCustomMaterial()
 
+    // Add object to GL Context
     const object = new Mesh(geometry, material)
     scene.add(object)
 
+    // Enable mouse controls
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.update()
 
+    // zoom out a bit
     camera.position.z = 5
 
     let lastGeo = gui.geometry
     let lastMat = gui.material
     object.onBeforeRender = () => {
-        material.uniforms.resolution.value = new Vector2(...resolution())
-        material.uniforms.lightPosition.value = new Vector3(...gui.lightPosition)
+        // Every time this specific object is drawn we will update the uniforms
+        // to create the drawing
+
+        material.uniforms['resolution'].value = new Vector2(...resolution())
+        material.uniforms['lightPosition'].value = new Vector3(...gui.lightPosition)
 
         if (lastMat !== gui.material) {
             lastMat = gui.material
-            material.uniforms.lakesTexture.value = createTextureLakeMap(gui.material)
+            material.uniforms['lakesTexture'].value = createTextureLakeMap(gui.material)
         }
 
         if (gui.manualColor) {
-            material.uniforms.lakesTexture.value = new DataTexture(new Uint8Array([
+            material.uniforms['lakesTexture'].value = new DataTexture(new Uint8Array([
                 ...gui.illuminatedColor,
                 ...gui.shadowedColor,
             ]), 2, 1, RGBFormat, UnsignedByteType)
@@ -66,15 +74,19 @@ export function main() {
     }
 
     function animate() {
+        // Animation loop, runs at local computer's FPS
         controls.update()
-
         renderer.render(scene, camera)
         requestAnimationFrame(animate)
     }
     animate()
 }
 
-function createCustomMaterial() {
+/**
+ * Using custom vertex and fragment shaders this Material will use Lake's
+ * runtime algorithm to sample from a texture to shade a given mesh
+ */
+function createCustomMaterial(): ShaderMaterial {
     const material = new ShaderMaterial({
         name: 'toonShader',
         fragmentShader,
@@ -91,14 +103,18 @@ function createCustomMaterial() {
     return material
 }
 
-interface LakeParameters {
-    ambientGlobal: Vector3
-    ambientLight: Vector3
-    diffuseLight: Vector3
-    ambientMaterial: Vector3
-    diffuseMaterial: Vector3
-}
-
+/**
+ * Using Lake's algorithm calculate illuminated and shaded colors for a material
+ * The calculations make use of the following parameters:
+ *
+ * - ambientGlobal: Vector3
+ * - ambientLight: Vector3
+ * - diffuseLight: Vector3
+ * - ambientMaterial: Vector3
+ * - diffuseMaterial: Vector3
+ *
+ * @param materialName Select predetermined material by name
+ */
 function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphire') {
     let material
     switch (materialName) {
@@ -131,33 +147,6 @@ function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphire') {
         diffuseLight: new Vector3(0.8, 0.8, 0.8),
         ...material
     } as LakeParameters
-
-    const calcColorIlluminated = (m: LakeParameters) => {
-        let result = new Vector3(0, 0, 0)
-        let temp = new Vector3(0, 0, 0)
-        // a_g * a_m
-        result.multiplyVectors(m.ambientGlobal, m.ambientMaterial)
-        // a_l * a_m
-        temp.multiplyVectors(m.ambientLight, m.ambientMaterial)
-        // a_g * a_m + a_l * a_m
-        result.addVectors(result, temp)
-        // d_l * d_m
-        temp.multiplyVectors(m.diffuseLight, m.diffuseMaterial)
-        // a_g * a_m + a_l * a_m + d_l * d_m
-        result.addVectors(result, temp)
-        return result
-    }
-    const calcColorShadowed = (m: LakeParameters) => {
-        let result = new Vector3(0)
-        let temp = new Vector3(0)
-        // a_g * a_m
-        result.multiplyVectors(m.ambientGlobal, m.ambientMaterial)
-        // a_l * a_m
-        temp.multiplyVectors(m.ambientLight, m.ambientMaterial)
-        // a_g * a_m + a_l * a_m
-        result.addVectors(result, temp)
-        return result
-    }
 
     const colorIlluminated = calcColorIlluminated(lakeParams).toArray()
     const colorShadowed = calcColorShadowed(lakeParams).toArray()
