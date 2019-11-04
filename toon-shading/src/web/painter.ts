@@ -74,8 +74,7 @@ uniform vec2 resolution;
 uniform float time;
 
 uniform vec3 lightPosition;
-uniform float ambientStrength;
-uniform sampler2D myTexture;
+uniform sampler2D lakesTexture;
 
 // Inputs
 in vec3 vertexNormal;
@@ -89,15 +88,10 @@ in vec3 vertexPosition;
 const vec2 LIGHT_COORD = vec2(0, 0);
 const vec2 SHADE_COORD = vec2(1, 0);
 
-// Function declarations
-vec4 lakesIlluminatedDiffuseColor();
-vec4 lakesShadowedDiffuseColor();
-vec4 lakesShading(vec3 normal, vec3 lightPosition);
-
 // Entry
 void main() {
-    vec4 illuminatedColor = texture2D(myTexture, LIGHT_COORD);
-    vec4 shadedColor = texture2D(myTexture, SHADE_COORD);
+    vec4 illuminatedColor = texture2D(lakesTexture, LIGHT_COORD);
+    vec4 shadedColor = texture2D(lakesTexture, SHADE_COORD);
 
     vec3 normal = normalize(vertexNormal); // n_bar
     vec3 lightDirection = normalize(lightPosition - vertexPosition); // l_bar
@@ -115,11 +109,5 @@ void main() {
     }
 
     gl_FragColor = vec4(colorToShadeIn, 1.0f);
-}
-
-vec4 lakesShading(vec3 normal, vec3 lightPosition) {
-    vec4 illuminatedDiffuseColor = vec4(0.0f);
-    vec4 shadowedDiffuseColor = vec4(0.0f);
-    return vec4(0.0f);
 }
 `

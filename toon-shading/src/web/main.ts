@@ -39,22 +39,19 @@ export function main() {
 
     camera.position.z = 5
 
-    let v = 0.0
-    let dv = 0.005
     let lastGeo = gui.geometry
     let lastMat = gui.material
     object.onBeforeRender = () => {
         material.uniforms.resolution.value = new Vector2(...resolution())
         material.uniforms.lightPosition.value = new Vector3(...gui.lightPosition)
-        material.uniforms.ambientStrength.value = v
 
         if (lastMat !== gui.material) {
             lastMat = gui.material
-            material.uniforms.myTexture.value = createTextureLakeMap(gui.material)
+            material.uniforms.lakesTexture.value = createTextureLakeMap(gui.material)
         }
 
         if (gui.manualColor) {
-            material.uniforms.myTexture.value = new DataTexture(new Uint8Array([
+            material.uniforms.lakesTexture.value = new DataTexture(new Uint8Array([
                 ...gui.illuminatedColor,
                 ...gui.shadowedColor,
             ]), 2, 1, RGBFormat, UnsignedByteType)
@@ -66,9 +63,6 @@ export function main() {
             object.geometry = new (geometry.g)(...geometry.args)
         }
 
-        if (v > 1) { dv = -dv }
-        if (v < 0) { dv = -dv }
-        v += dv
     }
 
     function animate() {
@@ -89,7 +83,7 @@ function createCustomMaterial() {
             resolution: { value: new Vector2(...resolution()) },
             lightPosition: { value: new Vector3(...gui.lightPosition) },
             ambientStrength: { value: 0.0 },
-            myTexture: { value: createTextureLakeMap(gui.material) },
+            lakesTexture: { value: createTextureLakeMap(gui.material) },
         },
 
     })
