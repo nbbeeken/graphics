@@ -1,4 +1,5 @@
-import { CanvasTexture, Color } from "three"
+import { Color } from "three/src/math/Color"
+import { CanvasTexture } from "three/src/textures/CanvasTexture"
 
 interface TwoTexCanvas {
     light: {

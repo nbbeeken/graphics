@@ -1,9 +1,23 @@
-import { BoxGeometry, Color, ConeGeometry, CylinderGeometry, DataTexture, Mesh, PerspectiveCamera, RGBFormat, Scene, ShaderMaterial, TorusKnotGeometry, UnsignedByteType, Vector2, Vector3, WebGLRenderer } from "three"
+import { BoxGeometry } from "three/src/geometries/BoxGeometry"
+import { ConeGeometry } from "three/src/geometries/ConeGeometry"
+import { CylinderGeometry } from "three/src/geometries/CylinderGeometry"
+import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
+import { Vector2 } from "three/src/math/Vector2"
+import { Vector3 } from "three/src/math/Vector3"
+import { Color } from "three/src/math/Color"
+import { DataTexture } from "three/src/textures/DataTexture"
+import { Mesh } from "three/src/objects/Mesh"
+import { PerspectiveCamera } from "three/src/cameras/PerspectiveCamera"
+import { Scene } from "three/src/scenes/Scene"
+import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
+import { UnsignedByteType, RGBFormat } from "three/src/constants"
+import { WebGLRenderer } from "three/src/renderers/WebGLRenderer"
+
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { gl } from './canvas'
 import { GUIControls } from './gui'
+import { calcColorIlluminated, calcColorShadowed, LakeParameters } from "./lakes"
 import { fragmentShader, vertexShader } from "./painter"
-import { LakeParameters, calcColorIlluminated, calcColorShadowed } from "./lakes"
 
 const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 

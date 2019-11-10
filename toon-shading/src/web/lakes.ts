@@ -1,4 +1,4 @@
-import { Vector3 } from "three"
+import { Vector3 } from "three/src/math/Vector3"
 
 export interface LakeParameters {
     ambientGlobal: Vector3

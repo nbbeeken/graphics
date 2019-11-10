@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const webpack = require('webpack')
 // @ts-ignore
 const Stylish = require('webpack-stylish')
+const OptimizeThreePlugin = require('@vxna/optimize-three-webpack-plugin')
 
 /** @type { import('webpack').Configuration } */
 const config = {
@@ -75,6 +76,7 @@ const config = {
         }),
         // @ts-ignore
         new webpack.NamedModulesPlugin(),
+        new OptimizeThreePlugin(),
         new Stylish()
     ]
 }
