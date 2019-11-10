@@ -56,8 +56,6 @@ export class Painter {
 }
 
 export const vertexShader = `
-uniform vec3 lightPosition;
-
 out vec3 vertexNormal;
 out vec3 vertexPosition;
 
@@ -78,33 +76,33 @@ uniform sampler2D lakesTexture;
 
 // Inputs
 in vec3 vertexNormal;
-// in vec4 vertexColor;
 in vec3 vertexPosition;
 
 // Outputs
 // gl_FragColor
 
-// constants
-const vec2 LIGHT_COORD = vec2(0, 0);
+// Constants
+const vec2 ILLUM_COORD = vec2(0, 0);
 const vec2 SHADE_COORD = vec2(1, 0);
 
 // Entry
 void main() {
-    vec4 illuminatedColor = texture2D(lakesTexture, LIGHT_COORD);
+    vec4 illuminatedColor = texture2D(lakesTexture, ILLUM_COORD);
     vec4 shadedColor = texture2D(lakesTexture, SHADE_COORD);
 
     vec3 normal = normalize(vertexNormal); // n_bar
     vec3 lightDirection = normalize(lightPosition - vertexPosition); // l_bar
+
     float cosAngIncidence = clamp(
         dot(normal, lightDirection), 0.0, 1.0
     );
 
     vec3 colorToShadeIn;
     if (cosAngIncidence > 0.5) {
-        // light
+        // illuminated
         colorToShadeIn = vec3(illuminatedColor);
     } else {
-        // shade
+        // shaded
         colorToShadeIn = vec3(shadedColor);
     }
 

@@ -94,10 +94,8 @@ function createCustomMaterial(): ShaderMaterial {
         uniforms: {
             resolution: { value: new Vector2(...resolution()) },
             lightPosition: { value: new Vector3(...gui.lightPosition) },
-            ambientStrength: { value: 0.0 },
             lakesTexture: { value: createTextureLakeMap(gui.material) },
         },
-
     })
     material.needsUpdate = true
     return material
