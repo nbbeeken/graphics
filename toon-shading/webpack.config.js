@@ -51,6 +51,12 @@ const config = {
                     'css-loader',
                 ],
             },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    'file-loader',
+                ],
+            },
         ],
     },
     resolve: {
@@ -62,17 +68,17 @@ const config = {
     },
     plugins: [
         // @ts-ignore
-        new HtmlWebpackPlugin({
-            template: 'src/index.html',
-            favicon: 'src/favicon.ico'
-        }),
-        // @ts-ignore
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // all options are optional
             filename: '[name].css',
             chunkFilename: '[id].css',
             ignoreOrder: false, // Enable to remove warnings about conflicting order
+        }),
+        // @ts-ignore
+        new HtmlWebpackPlugin({
+            template: 'src/index.html',
+            favicon: 'src/favicon.ico',
         }),
         // @ts-ignore
         new webpack.NamedModulesPlugin(),

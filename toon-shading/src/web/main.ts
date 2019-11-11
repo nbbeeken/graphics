@@ -18,6 +18,7 @@ import { gl } from './canvas'
 import { GUIControls } from './gui'
 import { calcColorIlluminated, calcColorShadowed, LakeParameters } from "./lakes"
 import { fragmentShader, vertexShader } from "./painter"
+import { parsePNG } from "./image"
 
 const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 
@@ -37,7 +38,8 @@ const geoSelector = (geometrySelection: 'box' | 'cone' | 'cylinder' | 'torus') =
 }
 
 export function main() {
-    renderer.setSize(window.innerWidth, window.innerHeight)
+    parsePNG()
+    renderer.setSize(Math.min(window.innerWidth, 1890), Math.min(window.innerHeight, 1000))
     renderer.setClearColor(BACKGROUND)
 
     window.addEventListener('resize', onResize)
@@ -127,7 +129,7 @@ function createCustomMaterial(): ShaderMaterial {
  *
  * @param materialName Select predetermined material by name
  */
-function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphire') {
+function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphire' = 'ruby') {
     let material
     switch (materialName) {
         case 'ruby': {
@@ -177,5 +179,6 @@ function onResize() {
     camera.updateProjectionMatrix()
     // update the size of the renderer AND the canvas
     renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(container.clientWidth, container.clientHeight)
+    renderer.setSize(Math.min(container.clientWidth, 1890), Math.min(container.clientHeight, 1000))
+
 }
