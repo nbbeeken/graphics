@@ -71,7 +71,7 @@ export function resizeCanvas(gl: WebGL2RenderingContext) {
     }
 }
 
-const canvas = document.getElementById('display') as HTMLCanvasElement
+const canvas = document.getElementById('display0') as HTMLCanvasElement
 const gl = getRenderingContext(canvas)
 
 export { gl }

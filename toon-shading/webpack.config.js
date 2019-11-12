@@ -1,16 +1,17 @@
 // @ts-check
 const path = require('path')
+const webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const webpack = require('webpack')
 // @ts-ignore
 const Stylish = require('webpack-stylish')
 const OptimizeThreePlugin = require('@vxna/optimize-three-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 /** @type { import('webpack').Configuration } */
 const config = {
     stats: false,
-    entry: './src/index.ts',
+    entry: ['./src/index.ts', './src/main.css'],
     devtool: 'source-map',
     devServer: {
         writeToDisk: true,
@@ -42,17 +43,14 @@ const config = {
             {
                 test: /\.css$/,
                 use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: process.env.NODE_ENV === 'development',
-                        },
-                    },
+                    'style-loader',
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
                 ],
             },
             {
-                test: /\.(png|svg|jpg|gif)$/,
+                test: /\.(gif|png|jpe?g|svg|cur)$/i,
+                include: path.resolve(__dirname, 'src', 'assets'),
                 use: [
                     'file-loader',
                 ],
@@ -60,20 +58,17 @@ const config = {
         ],
     },
     resolve: {
-        extensions: ['.ts', '.js', '.css'],
+        extensions: ['.ts', '.js', '.css', '.png', '.svg', '.cur'],
     },
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-        // @ts-ignore
+        new CleanWebpackPlugin(),
+        //@ts-ignore
         new MiniCssExtractPlugin({
-            // Options similar to the same options in webpackOptions.output
-            // all options are optional
-            filename: '[name].css',
-            chunkFilename: '[id].css',
-            ignoreOrder: false, // Enable to remove warnings about conflicting order
+            filename: '[name].css'
         }),
         // @ts-ignore
         new HtmlWebpackPlugin({

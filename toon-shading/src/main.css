@@ -1,22 +1,35 @@
 :root {
-  --bg-color: #fff;
-  --fg-color: #000;
+    --bg-color: #fff;
+    --fg-color: #000;
 }
 
 * {
-  margin: 0px;
-  padding: 0px;
-  background-color: rgb(51, 77, 77);
+    margin: 0px;
+    padding: 0px;
 }
 
 html,
 body,
 main {
-  height: 100%;
-  background-color: rgb(51, 77, 77);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
-#display {
-  height: 100vh;
-  width: 100vw;
+#display0 {
+    /* height: 100vh;
+    width: 50vw; */
+    width: 50%;
+}
+
+#display1 {
+    /* height: 100vh;
+    width: 50vw; */
+    width: 50%;
+    outline: 1px solid red;
+}
+
+.fillBucket {
+    cursor: url('./assets/img/fill-cursor.cur'), auto;
 }

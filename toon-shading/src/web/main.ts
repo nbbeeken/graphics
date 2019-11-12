@@ -20,6 +20,9 @@ import { calcColorIlluminated, calcColorShadowed, LakeParameters } from "./lakes
 import { fragmentShader, vertexShader } from "./painter"
 import { parsePNG } from "./image"
 
+import DrawingURL from '../assets/img/drawing.png'
+import CursorURL from '../assets/img/fill-cursor.cur'
+
 const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 
 const scene = new Scene()
@@ -37,11 +40,10 @@ const geoSelector = (geometrySelection: 'box' | 'cone' | 'cylinder' | 'torus') =
     }
 }
 
-export function main() {
-    parsePNG()
-    renderer.setSize(Math.min(window.innerWidth, 1890), Math.min(window.innerHeight, 1000))
+export async function main() {
     renderer.setClearColor(BACKGROUND)
 
+    onResize() // set original size
     window.addEventListener('resize', onResize)
 
     // Select initial geometry and create material
@@ -179,6 +181,6 @@ function onResize() {
     camera.updateProjectionMatrix()
     // update the size of the renderer AND the canvas
     renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(Math.min(container.clientWidth, 1890), Math.min(container.clientHeight, 1000))
+    renderer.setSize(container.clientWidth, container.clientHeight)
 
 }
