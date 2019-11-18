@@ -1,49 +1,50 @@
 import { Color } from "three/src/math/Color"
 import { CanvasTexture } from "three/src/textures/CanvasTexture"
 
-interface TwoTexCanvas {
-    light: {
-        context: CanvasRenderingContext2D
-        texture: CanvasTexture
-    }
-    shadow: {
-        context: CanvasRenderingContext2D
-        texture: CanvasTexture
-    }
+interface CanvasTexturePair {
+    context: CanvasRenderingContext2D
+    texture: CanvasTexture
 }
 
 export class Painter {
-    canvases: TwoTexCanvas
+    illuminationLayers: CanvasTexturePair[]
     color: Color
     constructor(color?: Color) {
         this.color = color || new Color('#FFFFFF')
         const light = Painter.makeTexCanvas(this.color.getStyle())
         const shadow = Painter.makeTexCanvas(this.color.sub(new Color(0.2, 0.2, 0.2)).getStyle())
-        this.canvases = { light, shadow }
+        this.illuminationLayers = [light, shadow]
     }
 
-    get illuminatedTexture() { return this.canvases.light.texture }
-    get shadowedTexture() { return this.canvases.shadow.texture }
-
+    /**
+     * Scribbles procedurally on a canvas to create artistic effect
+     * @param darkness levels of shadow from 0 to 3
+     */
     scribble() {
-        const ctx = this.canvases.light.context
+        for (let level = 0; level < this.illuminationLayers.length; level++) {
+            const ctx = this.illuminationLayers[level].context
 
-        ctx.strokeStyle = this.color.getStyle() || 'rgba(0, 0, 0, 1.0)'
-        ctx.beginPath()
-        ctx.moveTo(0, 0)
-        for (let i = 1; i < 120; i++) {
-            const args: [number, number] = i % 2 == 0 ? [i * 5, 0] : [0, i * 5]
-            ctx.lineTo(...args)
+            ctx.strokeStyle = this.color.getStyle() || 'rgba(0, 0, 0, 1.0)'
+            ctx.beginPath()
+            ctx.moveTo(0, 0)
+            for (let i = 1; i < 120; i++) {
+                const args: [number, number] = i % 2 == 0 ? [i * 5, 0] : [0, i * 5]
+                ctx.lineTo(...args)
+            }
+            ctx.stroke()
         }
-        ctx.stroke()
     }
 
     showCanvases() {
-        document.body.append(this.canvases.light.context.canvas)
-        document.body.append(this.canvases.shadow.context.canvas)
+        for (let i = 0; i < this.illuminationLayers.length; i++) {
+            const layer = this.illuminationLayers[i]
+
+            layer.context.canvas.setAttribute('title', `Level ${i}`)
+            document.body.append(layer.context.canvas)
+        }
     }
 
-    static makeTexCanvas(fillColor?: string) {
+    static makeTexCanvas(fillColor?: string): CanvasTexturePair {
         let canvas = document.createElement('canvas')
         canvas.height = 256
         canvas.width = 256

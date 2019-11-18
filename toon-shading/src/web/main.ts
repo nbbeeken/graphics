@@ -14,10 +14,16 @@ import { UnsignedByteType, RGBFormat } from "three/src/constants"
 import { WebGLRenderer } from "three/src/renderers/WebGLRenderer"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
+import * as Stats from "stats.js"
+
 import { gl } from './canvas'
 import { GUIControls } from './gui'
 import { calcColorIlluminated, calcColorShadowed, LakeParameters } from "./lakes"
-import { fragmentShader, vertexShader } from "./painter"
+import { fragmentShader, vertexShader, Painter } from "./painter"
+
+var stats = new Stats()
+stats.showPanel(0)
+document.body.appendChild(stats.dom)
 
 const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 
@@ -45,7 +51,7 @@ export async function main() {
     // Select initial geometry and create material
     let geo = geoSelector(gui.geometry)
     const geometry = new (geo.g)(...geo.args)
-    const material = createCustomMaterial()
+    const material = createLakesToonMaterial()
 
     // Add object to GL Context
     const object = new Mesh(geometry, material)
@@ -58,11 +64,24 @@ export async function main() {
     // zoom out a bit
     camera.position.z = 5
 
+    let p = new Painter()
+    p.scribble()
+    p.showCanvases()
+
     let lastGeo = gui.geometry
     let lastMat = gui.material
+    let lastSha = gui.shader
     object.onBeforeRender = () => {
         // Every time this specific object is drawn we will update the uniforms
         // to create the drawing
+
+        if (lastSha !== gui.shader) {
+            lastSha = gui.shader
+            object.material = {
+                'toon': createLakesToonMaterial(),
+                'scribble': createLakesScribbleMaterial()
+            }[gui.shader]
+        }
 
         material.uniforms['resolution'].value = new Vector2(...resolution())
         material.uniforms['lightPosition'].value = new Vector3(...gui.lightPosition)
@@ -70,13 +89,6 @@ export async function main() {
         if (lastMat !== gui.material) {
             lastMat = gui.material
             material.uniforms['lakesTexture'].value = createTextureLakeMap(gui.material)
-        }
-
-        if (gui.manualColor) {
-            material.uniforms['lakesTexture'].value = new DataTexture(new Uint8Array([
-                ...gui.illuminatedColor,
-                ...gui.shadowedColor,
-            ]), 2, 1, RGBFormat, UnsignedByteType)
         }
 
         if (lastGeo !== gui.geometry) {
@@ -87,11 +99,24 @@ export async function main() {
 
     }
 
+    let fps = 30
+    let fpsInterval = 1000 / fps
+    let then = performance.now()
     function animate() {
         // Animation loop, runs at local computer's FPS
-        controls.update()
-        renderer.render(scene, camera)
         requestAnimationFrame(animate)
+        let now = performance.now()
+        let elapsed = now - then
+        if (elapsed > fpsInterval) {
+            stats.begin()
+
+            then = now - (elapsed % fpsInterval)
+
+            controls.update()
+            renderer.render(scene, camera)
+
+            stats.end()
+        }
     }
     animate()
 }
@@ -100,7 +125,7 @@ export async function main() {
  * Using custom vertex and fragment shaders this Material will use Lake's
  * runtime algorithm to sample from a texture to shade a given mesh
  */
-function createCustomMaterial(): ShaderMaterial {
+function createLakesToonMaterial(): ShaderMaterial {
     const material = new ShaderMaterial({
         name: 'toonShader',
         fragmentShader,
@@ -110,6 +135,18 @@ function createCustomMaterial(): ShaderMaterial {
             lightPosition: { value: new Vector3(...gui.lightPosition) },
             lakesTexture: { value: createTextureLakeMap(gui.material) },
         },
+    })
+    material.needsUpdate = true
+    return material
+}
+
+/**
+ * Use scribble textures to create layers of shading replicating artist work
+ */
+function createLakesScribbleMaterial(): ShaderMaterial {
+    const material = new ShaderMaterial({
+        name: 'scribbleShader',
+        vertexShader,
     })
     material.needsUpdate = true
     return material
