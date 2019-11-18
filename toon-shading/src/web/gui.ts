@@ -13,7 +13,7 @@ export class GUIControls {
         public shadowedColor: [number, number, number] = [26, 23, 82],
 
         public material: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
-        public geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'cylinder',
+        public geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
     ) {
         this.gui = new dat.GUI()
 
@@ -34,7 +34,6 @@ export class GUIControls {
     get lightPosition(): [number, number, number] {
         return [this.lightPositionX, this.lightPositionY, this.lightPositionZ,]
     }
-
 
     rotationAnimation() { }
 }

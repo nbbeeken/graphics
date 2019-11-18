@@ -12,16 +12,12 @@ import { Scene } from "three/src/scenes/Scene"
 import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
 import { UnsignedByteType, RGBFormat } from "three/src/constants"
 import { WebGLRenderer } from "three/src/renderers/WebGLRenderer"
-
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+
 import { gl } from './canvas'
 import { GUIControls } from './gui'
 import { calcColorIlluminated, calcColorShadowed, LakeParameters } from "./lakes"
 import { fragmentShader, vertexShader } from "./painter"
-import { parsePNG } from "./image"
-
-import DrawingURL from '../assets/img/drawing.png'
-import CursorURL from '../assets/img/fill-cursor.cur'
 
 const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 
@@ -29,7 +25,7 @@ const scene = new Scene()
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 const renderer = new WebGLRenderer({ canvas: gl.canvas, context: gl })
 const gui = new GUIControls()
-const BACKGROUND = new Color(0.2, 0.3, 0.3)
+const BACKGROUND_COLOR = new Color(0.2, 0.3, 0.3)
 
 const geoSelector = (geometrySelection: 'box' | 'cone' | 'cylinder' | 'torus') => {
     switch (geometrySelection) {
@@ -41,7 +37,7 @@ const geoSelector = (geometrySelection: 'box' | 'cone' | 'cylinder' | 'torus') =
 }
 
 export async function main() {
-    renderer.setClearColor(BACKGROUND)
+    renderer.setClearColor(BACKGROUND_COLOR)
 
     onResize() // set original size
     window.addEventListener('resize', onResize)
