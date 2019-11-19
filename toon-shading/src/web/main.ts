@@ -5,12 +5,9 @@ import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
 import { Vector2 } from "three/src/math/Vector2"
 import { Vector3 } from "three/src/math/Vector3"
 import { Color } from "three/src/math/Color"
-import { DataTexture } from "three/src/textures/DataTexture"
 import { Mesh } from "three/src/objects/Mesh"
 import { PerspectiveCamera } from "three/src/cameras/PerspectiveCamera"
 import { Scene } from "three/src/scenes/Scene"
-import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
-import { UnsignedByteType, RGBFormat } from "three/src/constants"
 import { WebGLRenderer } from "three/src/renderers/WebGLRenderer"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
@@ -18,8 +15,7 @@ import * as Stats from "stats.js"
 
 import { gl } from './canvas'
 import { GUIControls } from './gui'
-import { calcColorIlluminated, calcColorShadowed, LakeParameters } from "./lakes"
-import { fragmentShader, vertexShader, Painter } from "./painter"
+import { createLakesToonMaterial, createTextureLakeMap, createLakesScribbleMaterial } from "./lakes"
 
 var stats = new Stats()
 stats.showPanel(0)
@@ -42,6 +38,13 @@ const geoSelector = (geometrySelection: 'box' | 'cone' | 'cylinder' | 'torus') =
     }
 }
 
+const matSelector = (materialSelection: 'toon' | 'scribble') => {
+    return {
+        'toon': createLakesToonMaterial(gui),
+        'scribble': createLakesScribbleMaterial(gui)
+    }[materialSelection]
+}
+
 export async function main() {
     renderer.setClearColor(BACKGROUND_COLOR)
 
@@ -51,7 +54,7 @@ export async function main() {
     // Select initial geometry and create material
     let geo = geoSelector(gui.geometry)
     const geometry = new (geo.g)(...geo.args)
-    const material = createLakesToonMaterial()
+    const material = matSelector(gui.shader)
 
     // Add object to GL Context
     const object = new Mesh(geometry, material)
@@ -64,10 +67,6 @@ export async function main() {
     // zoom out a bit
     camera.position.z = 5
 
-    let p = new Painter()
-    p.scribble()
-    p.showCanvases()
-
     let lastGeo = gui.geometry
     let lastMat = gui.material
     let lastSha = gui.shader
@@ -77,10 +76,7 @@ export async function main() {
 
         if (lastSha !== gui.shader) {
             lastSha = gui.shader
-            object.material = {
-                'toon': createLakesToonMaterial(),
-                'scribble': createLakesScribbleMaterial()
-            }[gui.shader]
+            object.material = matSelector(gui.shader)
         }
 
         material.uniforms['resolution'].value = new Vector2(...resolution())
@@ -88,7 +84,8 @@ export async function main() {
 
         if (lastMat !== gui.material) {
             lastMat = gui.material
-            material.uniforms['lakesTexture'].value = createTextureLakeMap(gui.material)
+            material.uniforms['lakesTexture'].value = [createTextureLakeMap(gui.material)]
+            material.uniforms['textureCount'].value = 1
         }
 
         if (lastGeo !== gui.geometry) {
@@ -119,91 +116,6 @@ export async function main() {
         }
     }
     animate()
-}
-
-/**
- * Using custom vertex and fragment shaders this Material will use Lake's
- * runtime algorithm to sample from a texture to shade a given mesh
- */
-function createLakesToonMaterial(): ShaderMaterial {
-    const material = new ShaderMaterial({
-        name: 'toonShader',
-        fragmentShader,
-        vertexShader,
-        uniforms: {
-            resolution: { value: new Vector2(...resolution()) },
-            lightPosition: { value: new Vector3(...gui.lightPosition) },
-            lakesTexture: { value: createTextureLakeMap(gui.material) },
-        },
-    })
-    material.needsUpdate = true
-    return material
-}
-
-/**
- * Use scribble textures to create layers of shading replicating artist work
- */
-function createLakesScribbleMaterial(): ShaderMaterial {
-    const material = new ShaderMaterial({
-        name: 'scribbleShader',
-        vertexShader,
-    })
-    material.needsUpdate = true
-    return material
-}
-
-/**
- * Using Lake's algorithm calculate illuminated and shaded colors for a material
- * The calculations make use of the following parameters:
- *
- * - ambientGlobal: Vector3
- * - ambientLight: Vector3
- * - diffuseLight: Vector3
- * - ambientMaterial: Vector3
- * - diffuseMaterial: Vector3
- *
- * @param materialName Select predetermined material by name
- */
-function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphire' = 'ruby') {
-    let material
-    switch (materialName) {
-        case 'ruby': {
-            material = {
-                ambientMaterial: new Vector3(44, 3, 3),
-                diffuseMaterial: new Vector3(157, 11, 11),
-            }
-            break
-        }
-        case 'peridot': {
-            material = {
-                ambientMaterial: new Vector3(5, 44, 5),
-                diffuseMaterial: new Vector3(19, 157, 19),
-            }
-            break
-        }
-        case 'sapphire': {
-            material = {
-                ambientMaterial: new Vector3(10, 10, 150),
-                diffuseMaterial: new Vector3(10, 10, 100),
-            }
-            break
-        }
-    }
-
-    const lakeParams = {
-        ambientGlobal: new Vector3(0.4, 0.4, 0.4),
-        ambientLight: new Vector3(0.5, 0.5, 0.5),
-        diffuseLight: new Vector3(0.8, 0.8, 0.8),
-        ...material
-    } as LakeParameters
-
-    const colorIlluminated = calcColorIlluminated(lakeParams).toArray()
-    const colorShadowed = calcColorShadowed(lakeParams).toArray()
-
-    return new DataTexture(new Uint8Array([
-        ...colorIlluminated,
-        ...colorShadowed,
-    ]), 2, 1, RGBFormat, UnsignedByteType)
 }
 
 function onResize() {
