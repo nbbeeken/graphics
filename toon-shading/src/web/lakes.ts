@@ -5,8 +5,14 @@ import { DataTexture } from "three/src/textures/DataTexture"
 import { RGBFormat, UnsignedByteType } from "three/src/constants"
 import { Color } from "three/src/math/Color"
 
+import { BoxGeometry } from "three/src/geometries/BoxGeometry"
+import { ConeGeometry } from "three/src/geometries/ConeGeometry"
+import { CylinderGeometry } from "three/src/geometries/CylinderGeometry"
+import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
+
 import { fragmentShader, vertexShader, Painter } from "./painter"
 import { GUIControls } from "./gui"
+import { Texture } from "three/src/textures/Texture"
 
 export interface LakeParameters {
     ambientGlobal: Vector3
@@ -50,27 +56,6 @@ export function calcColorShadowed(p: LakeParameters) {
     // a_g * a_m + a_l * a_m
     result.addVectors(result, temp)
     return result
-}
-
-/**
- * Using custom vertex and fragment shaders this Material will use Lake's
- * runtime algorithm to sample from a texture to shade a given mesh
- */
-export function createLakesToonMaterial(gui: GUIControls): ShaderMaterial {
-    const uniforms = {
-        resolution: { value: new Vector2(0, 0) },
-        lightPosition: { value: new Vector3(...gui.lightPosition) },
-        lakesTexture: { value: [createTextureLakeMap(gui.material)] },
-        textureCount: { value: 1 },
-    }
-    const material = new ShaderMaterial({
-        name: 'toonShader',
-        fragmentShader,
-        vertexShader,
-        uniforms,
-    })
-    material.needsUpdate = true
-    return material
 }
 
 /**
@@ -127,26 +112,62 @@ export function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphir
     ]), 2, 1, RGBFormat, UnsignedByteType)
 }
 
-/**
- * Use scribble textures to create layers of shading replicating artist work
- */
-export function createLakesScribbleMaterial(gui: GUIControls): ShaderMaterial {
-    const color = createTextureLakeMap(gui.material).image.data.slice(0, 3)
-    let p = new Painter(new Color(...color), gui.levels)
-    p.scribble()
-    p.showCanvases()
-    const uniforms = {
-        resolution: { value: new Vector2(0, 0) },
-        lightPosition: { value: new Vector3(...gui.lightPosition) },
-        lakesTexture: { value: p.illuminationLayers.map(l => l.texture) },
-        textureCount: { value: gui.levels }
+interface LakeUniforms {
+    lightPosition: { value: Vector3 }
+    lakesTexture: { value: Texture[] }
+    textureCount: { value: number }
+    [uniform: string]: { value: any }
+}
+
+export class LakeShaderManager {
+    public box = new BoxGeometry(...[1, 1])
+    public cone = new ConeGeometry(...[1, 1, 10])
+    public cylinder = new CylinderGeometry(...[1, 1, 1, 10])
+    public torus = new TorusKnotGeometry(...[1, 0.3])
+
+    constructor(
+        private gui: GUIControls
+    ) { }
+
+    get material() {
+        // Run updates on fetch
+        return new ShaderMaterial({
+            name: `lake${this.gui.material}Shader`,
+            fragmentShader,
+            vertexShader,
+            uniforms: this.getUniforms()
+        })
     }
-    const material = new ShaderMaterial({
-        name: 'scribbleShader',
-        vertexShader,
-        fragmentShader,
-        uniforms,
-    })
-    material.needsUpdate = true
-    return material
+
+    get geometry() {
+        // Saved references to geometries
+        return {
+            box: this.box,
+            cone: this.cone,
+            cylinder: this.cylinder,
+            torus: this.torus,
+        }[this.gui.geometry]
+    }
+
+    getUniforms(): LakeUniforms {
+        const textures = []
+        switch (this.gui.material) {
+            // Tonal shader selected
+            case 'toon':
+                textures.push(createTextureLakeMap(this.gui.color))
+                break
+            // Scribble shader selected
+            case 'scribble':
+                const color = [...createTextureLakeMap(this.gui.color).image.data.slice(0, 3)].map(v => v / 255)
+                const painter = new Painter(new Color(...color), this.gui.levels)
+                painter.scribble()
+                textures.push(...painter.illuminationLayers.map(l => l.texture))
+                break
+        }
+        return {
+            lightPosition: { value: new Vector3(...this.gui.lightPosition) },
+            lakesTexture: { value: textures },
+            textureCount: { value: textures.length },
+        }
+    }
 }

@@ -8,11 +8,8 @@ export class GUIControls {
         public lightPositionY: number = 0,
         public lightPositionZ: number = 10,
 
-        public illuminatedColor: [number, number, number] = [165, 56, 152],
-        public shadowedColor: [number, number, number] = [26, 23, 82],
-
-        public shader: 'toon' | 'scribble' = 'scribble',
-        public material: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
+        public material: 'toon' | 'scribble' = 'toon',
+        public color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
         public geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
 
         // Scribble Settings
@@ -20,7 +17,7 @@ export class GUIControls {
     ) {
         this.gui = new dat.GUI()
 
-        this.gui.add(this, 'shader', ['toon', 'scribble']).listen()
+        this.gui.add(this, 'material', ['toon', 'scribble']).listen()
         this.gui.add(this, 'geometry', ['box', 'cone', 'cylinder', 'torus']).listen()
 
         const lightPositionFolder = this.gui.addFolder('light position')
@@ -29,7 +26,7 @@ export class GUIControls {
         lightPositionFolder.add(this, 'lightPositionZ', 0, 20, 0.1).listen()
 
         const toonSettingsFolder = this.gui.addFolder('toon settings')
-        toonSettingsFolder.add(this, 'material', ['ruby', 'peridot', 'sapphire']).listen()
+        toonSettingsFolder.add(this, 'color', ['ruby', 'peridot', 'sapphire']).listen()
 
         const scribbleSettingsFolder = this.gui.addFolder('scribble settings')
         scribbleSettingsFolder.add(this, 'levels', [2, 3, 4]).listen()

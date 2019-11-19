@@ -2,7 +2,6 @@ import { BoxGeometry } from "three/src/geometries/BoxGeometry"
 import { ConeGeometry } from "three/src/geometries/ConeGeometry"
 import { CylinderGeometry } from "three/src/geometries/CylinderGeometry"
 import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
-import { Vector2 } from "three/src/math/Vector2"
 import { Vector3 } from "three/src/math/Vector3"
 import { Color } from "three/src/math/Color"
 import { Mesh } from "three/src/objects/Mesh"
@@ -15,7 +14,8 @@ import * as Stats from "stats.js"
 
 import { gl } from './canvas'
 import { GUIControls } from './gui'
-import { createLakesToonMaterial, createTextureLakeMap, createLakesScribbleMaterial } from "./lakes"
+import { createTextureLakeMap, LakeShaderManager } from "./lakes"
+import { Material } from "three"
 
 var stats = new Stats()
 stats.showPanel(0)
@@ -29,35 +29,16 @@ const renderer = new WebGLRenderer({ canvas: gl.canvas, context: gl })
 const gui = new GUIControls()
 const BACKGROUND_COLOR = new Color(0.2, 0.3, 0.3)
 
-const geoSelector = (geometrySelection: 'box' | 'cone' | 'cylinder' | 'torus') => {
-    switch (geometrySelection) {
-        case 'box': return { g: BoxGeometry, args: [1, 1] }
-        case 'cone': return { g: ConeGeometry, args: [1, 1, 10] }
-        case 'cylinder': return { g: CylinderGeometry, args: [1, 1, 1, 10] }
-        case 'torus': return { g: TorusKnotGeometry, args: [1, 0.3] }
-    }
-}
-
-const matSelector = (materialSelection: 'toon' | 'scribble') => {
-    return {
-        'toon': createLakesToonMaterial(gui),
-        'scribble': createLakesScribbleMaterial(gui)
-    }[materialSelection]
-}
-
 export async function main() {
     renderer.setClearColor(BACKGROUND_COLOR)
 
     onResize() // set original size
     window.addEventListener('resize', onResize)
 
-    // Select initial geometry and create material
-    let geo = geoSelector(gui.geometry)
-    const geometry = new (geo.g)(...geo.args)
-    const material = matSelector(gui.shader)
+    const lakeManager = new LakeShaderManager(gui)
 
     // Add object to GL Context
-    const object = new Mesh(geometry, material)
+    const object = new Mesh(lakeManager.geometry, lakeManager.material)
     scene.add(object)
 
     // Enable mouse controls
@@ -67,33 +48,12 @@ export async function main() {
     // zoom out a bit
     camera.position.z = 5
 
-    let lastGeo = gui.geometry
-    let lastMat = gui.material
-    let lastSha = gui.shader
     object.onBeforeRender = () => {
-        // Every time this specific object is drawn we will update the uniforms
-        // to create the drawing
-
-        if (lastSha !== gui.shader) {
-            lastSha = gui.shader
-            object.material = matSelector(gui.shader)
-        }
-
-        material.uniforms['resolution'].value = new Vector2(...resolution())
-        material.uniforms['lightPosition'].value = new Vector3(...gui.lightPosition)
-
-        if (lastMat !== gui.material) {
-            lastMat = gui.material
-            material.uniforms['lakesTexture'].value = [createTextureLakeMap(gui.material)]
-            material.uniforms['textureCount'].value = 1
-        }
-
-        if (lastGeo !== gui.geometry) {
-            lastGeo = gui.geometry
-            let geometry = geoSelector(gui.geometry)
-            object.geometry = new (geometry.g)(...geometry.args)
-        }
-
+        // Every time this specific object is drawn we will update the uniforms to create the drawing
+        object.material = lakeManager.material // implicitly runs updates
+        object.geometry = lakeManager.geometry // mostly a noop\
+        object.material.needsUpdate = true
+        // object.material.uniformsNeedsUpdate = true
     }
 
     let fps = 30

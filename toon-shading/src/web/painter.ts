@@ -13,7 +13,7 @@ export class Painter {
         color?: Color,
         public levels: 2 | 3 | 4 = 2
     ) {
-        this._color = (color || new Color('#FFFFFF')).getStyle()
+        this._color = (color || new Color(1.0, 1.0, 1.0)).getStyle()
         this.illuminationLayers = [
             Painter.makeTexCanvas(this.color.getStyle()),
             Painter.makeTexCanvas(this.color.sub(new Color(0.2, 0.2, 0.2)).getStyle()),
@@ -41,7 +41,7 @@ export class Painter {
         for (let level = 0; level < this.illuminationLayers.length; level++) {
             const ctx = this.illuminationLayers[level].context
 
-            ctx.strokeStyle = this.color.getStyle() || 'rgba(0, 0, 0, 1.0)'
+            ctx.strokeStyle = this.color.getStyle()
             ctx.beginPath()
             ctx.moveTo(0, 0)
             for (let i = 1; i < 120; i++) {
@@ -61,12 +61,12 @@ export class Painter {
         }
     }
 
-    static makeTexCanvas(fillColor?: string): CanvasTexturePair {
+    static makeTexCanvas(fillColor: string): CanvasTexturePair {
         let canvas = document.createElement('canvas')
         canvas.height = 256
         canvas.width = 256
         let context = canvas.getContext('2d')!
-        context.fillStyle = fillColor || '#FFFFFF'
+        context.fillStyle = fillColor
         context.fillRect(0, 0, 256, 256)
         let texture = new CanvasTexture(canvas)
         return { context, texture }
@@ -93,9 +93,6 @@ export const fragmentShader = `
 #define ERROR_COLOR vec3(0.5, 0.4, 0.5)
 
 // Uniforms
-uniform vec2 resolution;
-uniform float time;
-
 uniform vec3 lightPosition;
 uniform sampler2D lakesTexture[4];
 uniform int textureCount;
