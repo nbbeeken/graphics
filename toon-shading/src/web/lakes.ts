@@ -1,5 +1,4 @@
 import { Vector3 } from "three/src/math/Vector3"
-import { Vector2 } from "three/src/math/Vector2"
 import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
 import { DataTexture } from "three/src/textures/DataTexture"
 import { RGBFormat, UnsignedByteType } from "three/src/constants"

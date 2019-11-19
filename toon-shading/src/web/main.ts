@@ -1,8 +1,3 @@
-import { BoxGeometry } from "three/src/geometries/BoxGeometry"
-import { ConeGeometry } from "three/src/geometries/ConeGeometry"
-import { CylinderGeometry } from "three/src/geometries/CylinderGeometry"
-import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
-import { Vector3 } from "three/src/math/Vector3"
 import { Color } from "three/src/math/Color"
 import { Mesh } from "three/src/objects/Mesh"
 import { PerspectiveCamera } from "three/src/cameras/PerspectiveCamera"
@@ -14,14 +9,11 @@ import * as Stats from "stats.js"
 
 import { gl } from './canvas'
 import { GUIControls } from './gui'
-import { createTextureLakeMap, LakeShaderManager } from "./lakes"
-import { Material } from "three"
+import { LakeShaderManager } from "./lakes"
 
 var stats = new Stats()
 stats.showPanel(0)
 document.body.appendChild(stats.dom)
-
-const resolution = () => [gl.canvas.width, gl.canvas.height] as [number, number]
 
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -51,7 +43,7 @@ export async function main() {
     object.onBeforeRender = () => {
         // Every time this specific object is drawn we will update the uniforms to create the drawing
         object.material = lakeManager.material // implicitly runs updates
-        object.geometry = lakeManager.geometry // mostly a noop\
+        object.geometry = lakeManager.geometry // mostly a noop
         object.material.needsUpdate = true
         // object.material.uniformsNeedsUpdate = true
     }
