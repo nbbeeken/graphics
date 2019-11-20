@@ -124,6 +124,9 @@ export class LakeShaderManager {
     public cylinder = new CylinderGeometry(...[1, 1, 1, 10])
     public torus = new TorusKnotGeometry(...[1, 0.3])
 
+    private textures: Texture[] = []
+    private painter: Painter = new Painter()
+
     constructor(
         private gui: GUIControls
     ) { }
@@ -149,24 +152,25 @@ export class LakeShaderManager {
     }
 
     getUniforms(): LakeUniforms {
-        const textures = []
-        switch (this.gui.material) {
-            // Tonal shader selected
-            case 'toon':
-                textures.push(createTextureLakeMap(this.gui.color))
-                break
-            // Scribble shader selected
-            case 'scribble':
-                const color = [...createTextureLakeMap(this.gui.color).image.data.slice(0, 3)].map(v => v / 255)
-                const painter = new Painter(new Color(...color), this.gui.levels)
-                painter.scribble()
-                textures.push(...painter.illuminationLayers.map(l => l.texture))
-                break
+        if (this.gui.hasChanged) {
+            this.textures = []
+            switch (this.gui.material) {
+                // Tonal shader selected
+                case 'toon':
+                    this.textures.push(createTextureLakeMap(this.gui.color))
+                    break
+                // Scribble shader selected
+                case 'scribble':
+                    this.painter.color = new Color(...[...createTextureLakeMap(this.gui.color).image.data.slice(0, 3)].map(v => v / 255))
+                    this.painter.scribble(this.gui.levels)
+                    this.textures.push(...this.painter.illuminationLayers.map(l => l.texture))
+                    break
+            }
         }
         return {
             lightPosition: { value: new Vector3(...this.gui.lightPosition) },
-            lakesTexture: { value: textures },
-            textureCount: { value: textures.length },
+            lakesTexture: { value: this.textures },
+            textureCount: { value: this.textures.length },
         }
     }
 }

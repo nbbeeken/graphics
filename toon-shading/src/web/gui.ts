@@ -2,18 +2,15 @@ import * as dat from "dat.gui"
 
 export class GUIControls {
     gui: dat.GUI
+    private _hasChanged = true
     constructor(
-        // Light Positioning
-        public lightPositionX: number = 0,
-        public lightPositionY: number = 0,
-        public lightPositionZ: number = 10,
-
-        public material: 'toon' | 'scribble' = 'toon',
-        public color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
-        public geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
-
-        // Scribble Settings
-        public levels: 2 | 3 | 4 = 3,
+        private _lightPositionX: number = 0,
+        private _lightPositionY: number = 0,
+        private _lightPositionZ: number = 10,
+        private _material: 'toon' | 'scribble' = 'scribble',
+        private _color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
+        private _geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
+        private _levels: 2 | 3 | 4 = 3,
     ) {
         this.gui = new dat.GUI()
 
@@ -32,9 +29,52 @@ export class GUIControls {
         scribbleSettingsFolder.add(this, 'levels', [2, 3, 4]).listen()
     }
 
+    get hasChanged() {
+        if (this._hasChanged) {
+            this._hasChanged = false
+            return true
+        }
+        return false
+    }
+
     get lightPosition(): [number, number, number] {
         return [this.lightPositionX, this.lightPositionY, this.lightPositionZ,]
     }
 
-    rotationAnimation() { }
+    get lightPositionX() { return this._lightPositionX }
+    get lightPositionY() { return this._lightPositionY }
+    get lightPositionZ() { return this._lightPositionZ }
+    get material() { return this._material }
+    get color() { return this._color }
+    get geometry() { return this._geometry }
+    get levels() { return this._levels }
+
+    set lightPositionX(value) {
+        this._hasChanged = true
+        this._lightPositionX = value
+    }
+    set lightPositionY(value) {
+        this._hasChanged = true
+        this._lightPositionY = value
+    }
+    set lightPositionZ(value) {
+        this._hasChanged = true
+        this._lightPositionZ = value
+    }
+    set material(value) {
+        this._hasChanged = true
+        this._material = value
+    }
+    set color(value) {
+        this._hasChanged = true
+        this._color = value
+    }
+    set geometry(value) {
+        this._hasChanged = true
+        this._geometry = value
+    }
+    set levels(value) {
+        this._hasChanged = true
+        this._levels = value
+    }
 }

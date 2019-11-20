@@ -45,7 +45,6 @@ export async function main() {
         object.material = lakeManager.material // implicitly runs updates
         object.geometry = lakeManager.geometry // mostly a noop
         object.material.needsUpdate = true
-        // object.material.uniformsNeedsUpdate = true
     }
 
     let fps = 30

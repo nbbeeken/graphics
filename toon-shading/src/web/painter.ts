@@ -6,67 +6,67 @@ interface CanvasTexturePair {
     texture: CanvasTexture
 }
 
+let canvasesShown: boolean = false
+
 export class Painter {
-    illuminationLayers: CanvasTexturePair[]
-    private _color: string
-    constructor(
-        color?: Color,
-        public levels: 2 | 3 | 4 = 2
-    ) {
-        this._color = (color || new Color(1.0, 1.0, 1.0)).getStyle()
-        this.illuminationLayers = [
-            Painter.makeTexCanvas(this.color.getStyle()),
-            Painter.makeTexCanvas(this.color.sub(new Color(0.2, 0.2, 0.2)).getStyle()),
-        ]
-        if (levels >= 3) {
-            this.illuminationLayers.push(
-                Painter.makeTexCanvas(this.color.sub(new Color(0.3, 0.3, 0.3)).getStyle())
-            )
-        }
-        if (levels >= 4) {
-            this.illuminationLayers.push(
-                Painter.makeTexCanvas(this.color.sub(new Color(0.4, 0.4, 0.4)).getStyle())
-            )
-        }
-    }
+    illuminationLayers: CanvasTexturePair[] = []
+    private _color: string = 'rbg(125, 105, 125)'
 
     get color() {
         return new Color(this._color)
     }
 
+    set color(value) {
+        this._color = value.getStyle()
+    }
+
     /**
      * Scribbles procedurally on a canvas to create artistic effect
      */
-    scribble() {
+    scribble(levels: number) {
+        this.illuminationLayers = (new Array(levels)).fill(null).map(_ => this.makeTexCanvas())
+
         for (let level = 0; level < this.illuminationLayers.length; level++) {
             const ctx = this.illuminationLayers[level].context
+            ctx.save()
+            const subtractAmount = [0.1, 0.1, 0.1].map(cv => cv * level)
+            const lineColor = this.color.sub(new Color(...subtractAmount)).getStyle()
 
-            ctx.strokeStyle = this.color.getStyle()
+            ctx.lineCap = 'round'
+            ctx.strokeStyle = lineColor
             ctx.beginPath()
             ctx.moveTo(0, 0)
             for (let i = 1; i < 120; i++) {
+                ctx.lineWidth = Math.random() * 3
                 const args: [number, number] = i % 2 == 0 ? [i * 5, 0] : [0, i * 5]
                 ctx.lineTo(...args)
             }
             ctx.stroke()
+
+
+
+            ctx.restore()
         }
     }
 
     showCanvases() {
-        for (let i = 0; i < this.illuminationLayers.length; i++) {
-            const layer = this.illuminationLayers[i]
+        if (!canvasesShown) {
+            canvasesShown = true
+            for (let i = 0; i < this.illuminationLayers.length; i++) {
+                const layer = this.illuminationLayers[i]
 
-            layer.context.canvas.setAttribute('title', `Level ${i}`)
-            document.body.append(layer.context.canvas)
+                layer.context.canvas.setAttribute('title', `Level ${i}`)
+                document.body.append(layer.context.canvas)
+            }
         }
     }
 
-    static makeTexCanvas(fillColor: string): CanvasTexturePair {
+    makeTexCanvas(): CanvasTexturePair {
         let canvas = document.createElement('canvas')
         canvas.height = 256
         canvas.width = 256
         let context = canvas.getContext('2d')!
-        context.fillStyle = fillColor
+        context.fillStyle = this.color.getStyle()
         context.fillRect(0, 0, 256, 256)
         let texture = new CanvasTexture(canvas)
         return { context, texture }
