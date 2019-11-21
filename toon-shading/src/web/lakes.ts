@@ -10,8 +10,8 @@ import { ConeGeometry } from "three/src/geometries/ConeGeometry"
 import { CylinderGeometry } from "three/src/geometries/CylinderGeometry"
 import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
 
-import { fragmentShader, vertexShader, Painter } from "./painter"
-import { GUIControls } from "./gui"
+import { Painter } from "./painter"
+import { gui } from "./gui"
 
 export interface LakeParameters {
     ambientGlobal: Vector3
@@ -127,16 +127,14 @@ export class LakeShaderManager {
     private textures: Texture[] = []
     private painter: Painter = new Painter()
 
-    constructor(
-        private gui: GUIControls
-    ) { }
+    constructor() { }
 
     get material() {
         // Run updates on fetch
         return new ShaderMaterial({
-            name: `lake${this.gui.material}Shader`,
-            fragmentShader,
-            vertexShader,
+            name: `lake${gui.material}Shader`,
+            fragmentShader: Painter.fragmentShader,
+            vertexShader: Painter.vertexShader,
             uniforms: this.getUniforms()
         })
     }
@@ -148,27 +146,27 @@ export class LakeShaderManager {
             cone: this.cone,
             cylinder: this.cylinder,
             torus: this.torus,
-        }[this.gui.geometry]
+        }[gui.geometry]
     }
 
     getUniforms(): LakeUniforms {
-        if (this.gui.hasChanged) {
+        if (gui.hasChanged) {
             this.textures = []
-            switch (this.gui.material) {
+            switch (gui.material) {
                 // Tonal shader selected
                 case 'toon':
-                    this.textures.push(createTextureLakeMap(this.gui.color))
+                    this.textures.push(createTextureLakeMap(gui.color))
                     break
                 // Scribble shader selected
                 case 'scribble':
-                    this.painter.color = new Color(...[...createTextureLakeMap(this.gui.color).image.data.slice(0, 3)].map(v => v / 255))
-                    this.painter.scribble(this.gui.levels)
+                    this.painter.color = new Color(...[...createTextureLakeMap(gui.color).image.data.slice(0, 3)].map(v => v / 255))
+                    this.painter.scribble(gui.levels)
                     this.textures.push(...this.painter.illuminationLayers.map(l => l.texture))
                     break
             }
         }
         return {
-            lightPosition: { value: new Vector3(...this.gui.lightPosition) },
+            lightPosition: { value: new Vector3(...gui.lightPosition) },
             lakesTextures: { value: this.textures },
             textureCount: { value: this.textures.length },
         }

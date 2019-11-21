@@ -1,6 +1,6 @@
 import * as dat from "dat.gui"
 
-export class GUIControls {
+class GUIControls {
     gui: dat.GUI
     private _hasChanged = true
     constructor(
@@ -11,6 +11,8 @@ export class GUIControls {
         private _color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
         private _geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
         private _levels: 2 | 3 | 4 = 3,
+        private _silhouetteWidth: number = 0.01,
+        private _silhouetteColor: string = '#000000',
     ) {
         this.gui = new dat.GUI()
 
@@ -27,6 +29,8 @@ export class GUIControls {
 
         const scribbleSettingsFolder = this.gui.addFolder('scribble settings')
         scribbleSettingsFolder.add(this, 'levels', [2, 3, 4]).listen()
+        scribbleSettingsFolder.add(this, 'silhouetteWidth').listen()
+        scribbleSettingsFolder.addColor(this, 'silhouetteColor').listen()
     }
 
     get hasChanged() {
@@ -48,6 +52,8 @@ export class GUIControls {
     get color() { return this._color }
     get geometry() { return this._geometry }
     get levels() { return this._levels }
+    get silhouetteColor() { return this._silhouetteColor }
+    get silhouetteWidth() { return this._silhouetteWidth }
 
     set lightPositionX(value) {
         this._hasChanged = true
@@ -77,4 +83,14 @@ export class GUIControls {
         this._hasChanged = true
         this._levels = value
     }
+    set silhouetteColor(value: string) {
+        this._hasChanged = true
+        this._silhouetteColor = value
+    }
+    set silhouetteWidth(value) {
+        this._hasChanged = true
+        this._silhouetteWidth = value
+    }
 }
+
+export const gui = new GUIControls()

@@ -8,8 +8,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import * as Stats from "stats.js"
 
 import { gl } from './canvas'
-import { GUIControls } from './gui'
 import { LakeShaderManager } from "./lakes"
+import { Inker } from "./inker"
+import { Group } from "three/src/objects/Group"
 
 var stats = new Stats()
 stats.showPanel(0)
@@ -18,7 +19,6 @@ document.body.appendChild(stats.dom)
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 const renderer = new WebGLRenderer({ canvas: gl.canvas, context: gl })
-const gui = new GUIControls()
 const BACKGROUND_COLOR = new Color(0.2, 0.3, 0.3)
 
 export async function main() {
@@ -27,11 +27,18 @@ export async function main() {
     onResize() // set original size
     window.addEventListener('resize', onResize)
 
-    const lakeManager = new LakeShaderManager(gui)
+    const lakeManager = new LakeShaderManager()
+    const inker = new Inker()
+
+    const materials = () => [inker.material, lakeManager.material]
+    var group = new Group()
+
+    for (var i = 0, l = materials().length; i < l; i++) {
+        group.add(new Mesh(lakeManager.geometry, materials()[i]))
+    }
 
     // Add object to GL Context
-    const object = new Mesh(lakeManager.geometry, lakeManager.material)
-    scene.add(object)
+    scene.add(group)
 
     // Enable mouse controls
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -40,12 +47,12 @@ export async function main() {
     // zoom out a bit
     camera.position.z = 5
 
-    object.onBeforeRender = () => {
-        // Every time this specific object is drawn we will update the uniforms to create the drawing
-        object.material = lakeManager.material // implicitly runs updates
-        object.geometry = lakeManager.geometry // mostly a noop
-        object.material.needsUpdate = true
-    }
+    // object.onBeforeRender = () => {
+    //     // Every time this specific object is drawn we will update the uniforms to create the drawing
+    //     object.material = [inker.material, lakeManager.material] // implicitly runs updates
+    //     object.geometry = lakeManager.geometry // mostly a noop
+    //     object.material.map(v => v.needsUpdate = true)
+    // }
 
     let fps = 30
     let fpsInterval = 1000 / fps
