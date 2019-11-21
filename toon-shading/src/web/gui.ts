@@ -1,5 +1,5 @@
 import * as dat from "dat.gui"
-
+type LEVEL_VALUES = 2 | 3 | 4
 class GUIControls {
     gui: dat.GUI
     private _hasChanged = true
@@ -10,7 +10,7 @@ class GUIControls {
         private _material: 'toon' | 'scribble' = 'scribble',
         private _color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
         private _geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
-        private _levels: 2 | 3 | 4 = 3,
+        private _levels: LEVEL_VALUES = 3,
         private _silhouetteWidth: number = 0.01,
         private _silhouetteColor: string = '#000000',
     ) {
@@ -51,7 +51,7 @@ class GUIControls {
     get material() { return this._material }
     get color() { return this._color }
     get geometry() { return this._geometry }
-    get levels() { return this._levels }
+    get levels() { return +this._levels as LEVEL_VALUES }
     get silhouetteColor() { return this._silhouetteColor }
     get silhouetteWidth() { return this._silhouetteWidth }
 
@@ -81,7 +81,7 @@ class GUIControls {
     }
     set levels(value) {
         this._hasChanged = true
-        this._levels = value
+        this._levels = +value as LEVEL_VALUES
     }
     set silhouetteColor(value: string) {
         this._hasChanged = true

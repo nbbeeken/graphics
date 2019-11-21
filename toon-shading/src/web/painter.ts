@@ -1,5 +1,13 @@
 import { Color } from "three/src/math/Color"
 import { CanvasTexture } from "three/src/textures/CanvasTexture"
+import { DataTexture } from "three/src/textures/DataTexture"
+import { RGBFormat, UnsignedByteType } from "three/src/constants"
+import { Vector3 } from "three/src/math/Vector3"
+import { Texture } from "three/src/textures/Texture"
+import { gui } from "./gui"
+import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
+import { calculateLakeColors, selectStandardMaterialLighting, LakeColors } from "./lakes"
+import { normalize } from "./utils"
 
 interface CanvasTexturePair {
     context: CanvasRenderingContext2D
@@ -8,10 +16,20 @@ interface CanvasTexturePair {
 
 let canvasesShown: boolean = false
 
+interface PainterUniforms {
+    lightPosition: { value: Vector3 }
+    lakesTextures: { value: Texture[] }
+    textureCount: { value: number }
+    [uniform: string]: { value: any }
+}
+
 export class Painter {
-    illuminationLayers: CanvasTexturePair[] = []
+    private illuminationLayers: CanvasTexturePair[] = []
     private _color: string = 'rbg(125, 105, 125)'
     private static dimension = 512
+
+    private textures: Texture[] = []
+
 
     get color() {
         return new Color(this._color)
@@ -19,6 +37,47 @@ export class Painter {
 
     set color(value) {
         this._color = value.getStyle()
+    }
+
+    get material() {
+        // Run updates on fetch
+        return new ShaderMaterial({
+            name: `lake${gui.material}Shader`,
+            fragmentShader: Painter.fragmentShader,
+            vertexShader: Painter.vertexShader,
+            uniforms: this.uniforms
+        })
+    }
+
+    get uniforms(): PainterUniforms {
+        if (gui.hasChanged) {
+            this.textures = []
+            const materialLight = selectStandardMaterialLighting[gui.color]
+            const lakeColors = calculateLakeColors(materialLight)
+            switch (gui.material) {
+                // Tonal shader selected
+                case 'toon':
+                    this.textures.push(this.toon(lakeColors))
+                    break
+                // Scribble shader selected
+                case 'scribble':
+                    this.color = new Color(...normalize(lakeColors.illuminated, 255))
+                    this.textures.push(...this.scribble(gui.levels))
+                    break
+            }
+        }
+        return {
+            lightPosition: { value: new Vector3(...gui.lightPosition) },
+            lakesTextures: { value: this.textures },
+            textureCount: { value: this.textures.length },
+        }
+    }
+
+    toon(lakeColors: LakeColors) {
+        return new DataTexture(new Uint8Array([
+            ...lakeColors.illuminated,
+            ...lakeColors.shadowed,
+        ]), 2, 1, RGBFormat, UnsignedByteType)
     }
 
     /**
@@ -33,6 +92,19 @@ export class Painter {
             const color = this.color.sub(new Color(...subtractAmount)).getStyle()
             this.zigzag(level, ctx, color)
             this.pointillism(level, ctx, color)
+        }
+        return this.illuminationLayers.map(v => v.texture)
+    }
+
+    showCanvases() {
+        if (!canvasesShown) {
+            canvasesShown = true
+            for (let i = 0; i < this.illuminationLayers.length; i++) {
+                const layer = this.illuminationLayers[i]
+
+                layer.context.canvas.setAttribute('title', `Level ${i}`)
+                document.body.append(layer.context.canvas)
+            }
         }
     }
 
@@ -68,19 +140,7 @@ export class Painter {
         ctx.restore()
     }
 
-    showCanvases() {
-        if (!canvasesShown) {
-            canvasesShown = true
-            for (let i = 0; i < this.illuminationLayers.length; i++) {
-                const layer = this.illuminationLayers[i]
-
-                layer.context.canvas.setAttribute('title', `Level ${i}`)
-                document.body.append(layer.context.canvas)
-            }
-        }
-    }
-
-    makeTexCanvas(): CanvasTexturePair {
+    private makeTexCanvas(): CanvasTexturePair {
         let canvas = document.createElement('canvas')
         canvas.height = Painter.dimension
         canvas.width = Painter.dimension

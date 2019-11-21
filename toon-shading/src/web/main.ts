@@ -8,9 +8,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import * as Stats from "stats.js"
 
 import { gl } from './canvas'
-import { LakeShaderManager } from "./lakes"
 import { Inker } from "./inker"
-import { Group } from "three/src/objects/Group"
+import { Painter } from "./painter"
+import { ShapesSelector } from "./shapes"
 
 var stats = new Stats()
 stats.showPanel(0)
@@ -27,18 +27,12 @@ export async function main() {
     onResize() // set original size
     window.addEventListener('resize', onResize)
 
-    const lakeManager = new LakeShaderManager()
+    const shapesSelector = new ShapesSelector()
+    const painter = new Painter()
     const inker = new Inker()
 
-    const materials = () => [lakeManager.material, inker.material]
-    // var group = new Group()
-
-    // for (var i = 0, l = materials().length; i < l; i++) {
-    //     group.add(new Mesh(lakeManager.geometry, materials()[i]))
-    // }
-
-    const object = new Mesh(lakeManager.geometry, lakeManager.material)
-    const silhouette = new Mesh(lakeManager.geometry, inker.material)
+    const object = new Mesh(shapesSelector.geometry, painter.material)
+    const silhouette = new Mesh(shapesSelector.geometry, inker.material)
     // Add object to GL Context
     scene.add(object)
     scene.add(silhouette)
@@ -52,15 +46,15 @@ export async function main() {
 
     object.onBeforeRender = () => {
         // Every time this specific object is drawn we will update the uniforms to create the drawing
-        object.material = lakeManager.material // implicitly runs updates
-        object.geometry = lakeManager.geometry // mostly a noop
+        object.material = painter.material // implicitly runs updates
+        object.geometry = shapesSelector.geometry // mostly a noop
         object.material.needsUpdate = true
     }
 
     silhouette.onBeforeRender = () => {
         // Every time this specific object is drawn we will update the uniforms to create the drawing
         silhouette.material = inker.material // implicitly runs updates
-        silhouette.geometry = lakeManager.geometry // mostly a noop
+        silhouette.geometry = shapesSelector.geometry // mostly a noop
         silhouette.material.needsUpdate = true
 
     }

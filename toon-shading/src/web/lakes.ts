@@ -1,31 +1,47 @@
 import { Vector3 } from "three/src/math/Vector3"
-import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
-import { DataTexture } from "three/src/textures/DataTexture"
-import { RGBFormat, UnsignedByteType } from "three/src/constants"
-import { Color } from "three/src/math/Color"
-import { Texture } from "three/src/textures/Texture"
 
-import { BoxGeometry } from "three/src/geometries/BoxGeometry"
-import { ConeGeometry } from "three/src/geometries/ConeGeometry"
-import { CylinderGeometry } from "three/src/geometries/CylinderGeometry"
-import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
-
-import { Painter } from "./painter"
-import { gui } from "./gui"
-
-export interface LakeParameters {
-    ambientGlobal: Vector3
-    ambientLight: Vector3
-    diffuseLight: Vector3
+export interface MaterialLighting {
     ambientMaterial: Vector3
     diffuseMaterial: Vector3
 }
+export interface EnvironmentLighting {
+    ambientGlobal: Vector3
+    ambientLight: Vector3
+    diffuseLight: Vector3
+}
+export interface LakeParameters extends MaterialLighting, EnvironmentLighting { }
+export interface LakeColors { illuminated: [number, number, number], shadowed: [number, number, number] }
+
+export const RUBY = {
+    ambientMaterial: new Vector3(44, 3, 3),
+    diffuseMaterial: new Vector3(157, 11, 11),
+}
+export const PERIDOT = {
+    ambientMaterial: new Vector3(5, 44, 5),
+    diffuseMaterial: new Vector3(19, 157, 19),
+}
+export const SAPPHIRE = {
+    ambientMaterial: new Vector3(10, 10, 150),
+    diffuseMaterial: new Vector3(10, 10, 100),
+}
+const ENV_LIGHT = {
+    ambientGlobal: new Vector3(0.4, 0.4, 0.4),
+    ambientLight: new Vector3(0.5, 0.5, 0.5),
+    diffuseLight: new Vector3(0.8, 0.8, 0.8),
+}
+
+export const selectStandardMaterialLighting = {
+    ruby: RUBY,
+    peridot: PERIDOT,
+    sapphire: SAPPHIRE
+}
+
 
 /**
  * `a_g * a_m + a_l * a_m + d_l * d_m`
  * @param p Lake parameters
  */
-export function calcColorIlluminated(p: LakeParameters) {
+export function calcLakeIlluminated(p: LakeParameters) {
     let result = new Vector3(0, 0, 0)
     let temp = new Vector3(0, 0, 0)
     // a_g * a_m
@@ -45,7 +61,7 @@ export function calcColorIlluminated(p: LakeParameters) {
  * `a_g * a_m + a_l * a_m`
  * @param p Lake Parameters
  */
-export function calcColorShadowed(p: LakeParameters) {
+export function calcLakeShadowed(p: LakeParameters) {
     let result = new Vector3(0)
     let temp = new Vector3(0)
     // a_g * a_m
@@ -69,106 +85,13 @@ export function calcColorShadowed(p: LakeParameters) {
  *
  * @param materialName Select predetermined material by name
  */
-export function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphire' = 'ruby') {
-    let material
-    switch (materialName) {
-        case 'ruby': {
-            material = {
-                ambientMaterial: new Vector3(44, 3, 3),
-                diffuseMaterial: new Vector3(157, 11, 11),
-            }
-            break
-        }
-        case 'peridot': {
-            material = {
-                ambientMaterial: new Vector3(5, 44, 5),
-                diffuseMaterial: new Vector3(19, 157, 19),
-            }
-            break
-        }
-        case 'sapphire': {
-            material = {
-                ambientMaterial: new Vector3(10, 10, 150),
-                diffuseMaterial: new Vector3(10, 10, 100),
-            }
-            break
-        }
-    }
-
+export function calculateLakeColors(matLight = RUBY, envLight = ENV_LIGHT): LakeColors {
     const lakeParams = {
-        ambientGlobal: new Vector3(0.4, 0.4, 0.4),
-        ambientLight: new Vector3(0.5, 0.5, 0.5),
-        diffuseLight: new Vector3(0.8, 0.8, 0.8),
-        ...material
-    } as LakeParameters
-
-    const colorIlluminated = calcColorIlluminated(lakeParams).toArray()
-    const colorShadowed = calcColorShadowed(lakeParams).toArray()
-
-    return new DataTexture(new Uint8Array([
-        ...colorIlluminated,
-        ...colorShadowed,
-    ]), 2, 1, RGBFormat, UnsignedByteType)
-}
-
-interface LakeUniforms {
-    lightPosition: { value: Vector3 }
-    lakesTextures: { value: Texture[] }
-    textureCount: { value: number }
-    [uniform: string]: { value: any }
-}
-
-export class LakeShaderManager {
-    public box = new BoxGeometry(...[1, 1])
-    public cone = new ConeGeometry(...[1, 1, 32])
-    public cylinder = new CylinderGeometry(...[1, 1, 1, 32])
-    public torus = new TorusKnotGeometry(...[1, 0.3])
-
-    private textures: Texture[] = []
-    private painter: Painter = new Painter()
-
-    constructor() { }
-
-    get material() {
-        // Run updates on fetch
-        return new ShaderMaterial({
-            name: `lake${gui.material}Shader`,
-            fragmentShader: Painter.fragmentShader,
-            vertexShader: Painter.vertexShader,
-            uniforms: this.getUniforms()
-        })
+        ...envLight,
+        ...matLight,
     }
+    const illuminated = calcLakeIlluminated(lakeParams).toArray() as [number, number, number]
+    const shadowed = calcLakeShadowed(lakeParams).toArray() as [number, number, number]
 
-    get geometry() {
-        // Saved references to geometries
-        return {
-            box: this.box,
-            cone: this.cone,
-            cylinder: this.cylinder,
-            torus: this.torus,
-        }[gui.geometry]
-    }
-
-    getUniforms(): LakeUniforms {
-        if (gui.hasChanged) {
-            this.textures = []
-            switch (gui.material) {
-                // Tonal shader selected
-                case 'toon':
-                    this.textures.push(createTextureLakeMap(gui.color))
-                    break
-                // Scribble shader selected
-                case 'scribble':
-                    this.painter.color = new Color(...[...createTextureLakeMap(gui.color).image.data.slice(0, 3)].map(v => v / 255))
-                    this.painter.scribble(gui.levels)
-                    this.textures.push(...this.painter.illuminationLayers.map(l => l.texture))
-                    break
-            }
-        }
-        return {
-            lightPosition: { value: new Vector3(...gui.lightPosition) },
-            lakesTextures: { value: this.textures },
-            textureCount: { value: this.textures.length },
-        }
-    }
+    return { illuminated, shadowed }
 }
