@@ -29,7 +29,7 @@ class GUIControls {
 
         const scribbleSettingsFolder = this.gui.addFolder('scribble settings')
         scribbleSettingsFolder.add(this, 'levels', [2, 3, 4]).listen()
-        scribbleSettingsFolder.add(this, 'silhouetteWidth').listen()
+        scribbleSettingsFolder.add(this, 'silhouetteWidth', 0.0, 0.1, 0.01).listen()
         scribbleSettingsFolder.addColor(this, 'silhouetteColor').listen()
     }
 

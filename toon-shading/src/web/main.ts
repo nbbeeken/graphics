@@ -30,15 +30,18 @@ export async function main() {
     const lakeManager = new LakeShaderManager()
     const inker = new Inker()
 
-    const materials = () => [inker.material, lakeManager.material]
-    var group = new Group()
+    const materials = () => [lakeManager.material, inker.material]
+    // var group = new Group()
 
-    for (var i = 0, l = materials().length; i < l; i++) {
-        group.add(new Mesh(lakeManager.geometry, materials()[i]))
-    }
+    // for (var i = 0, l = materials().length; i < l; i++) {
+    //     group.add(new Mesh(lakeManager.geometry, materials()[i]))
+    // }
 
+    const object = new Mesh(lakeManager.geometry, lakeManager.material)
+    const silhouette = new Mesh(lakeManager.geometry, inker.material)
     // Add object to GL Context
-    scene.add(group)
+    scene.add(object)
+    scene.add(silhouette)
 
     // Enable mouse controls
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -47,12 +50,20 @@ export async function main() {
     // zoom out a bit
     camera.position.z = 5
 
-    // object.onBeforeRender = () => {
-    //     // Every time this specific object is drawn we will update the uniforms to create the drawing
-    //     object.material = [inker.material, lakeManager.material] // implicitly runs updates
-    //     object.geometry = lakeManager.geometry // mostly a noop
-    //     object.material.map(v => v.needsUpdate = true)
-    // }
+    object.onBeforeRender = () => {
+        // Every time this specific object is drawn we will update the uniforms to create the drawing
+        object.material = lakeManager.material // implicitly runs updates
+        object.geometry = lakeManager.geometry // mostly a noop
+        object.material.needsUpdate = true
+    }
+
+    silhouette.onBeforeRender = () => {
+        // Every time this specific object is drawn we will update the uniforms to create the drawing
+        silhouette.material = inker.material // implicitly runs updates
+        silhouette.geometry = lakeManager.geometry // mostly a noop
+        silhouette.material.needsUpdate = true
+
+    }
 
     let fps = 30
     let fpsInterval = 1000 / fps
