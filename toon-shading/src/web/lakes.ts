@@ -3,6 +3,7 @@ import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
 import { DataTexture } from "three/src/textures/DataTexture"
 import { RGBFormat, UnsignedByteType } from "three/src/constants"
 import { Color } from "three/src/math/Color"
+import { Texture } from "three/src/textures/Texture"
 
 import { BoxGeometry } from "three/src/geometries/BoxGeometry"
 import { ConeGeometry } from "three/src/geometries/ConeGeometry"
@@ -11,7 +12,6 @@ import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
 
 import { fragmentShader, vertexShader, Painter } from "./painter"
 import { GUIControls } from "./gui"
-import { Texture } from "three/src/textures/Texture"
 
 export interface LakeParameters {
     ambientGlobal: Vector3
@@ -113,15 +113,15 @@ export function createTextureLakeMap(materialName: 'ruby' | 'peridot' | 'sapphir
 
 interface LakeUniforms {
     lightPosition: { value: Vector3 }
-    lakesTexture: { value: Texture[] }
+    lakesTextures: { value: Texture[] }
     textureCount: { value: number }
     [uniform: string]: { value: any }
 }
 
 export class LakeShaderManager {
     public box = new BoxGeometry(...[1, 1])
-    public cone = new ConeGeometry(...[1, 1, 10])
-    public cylinder = new CylinderGeometry(...[1, 1, 1, 10])
+    public cone = new ConeGeometry(...[1, 1, 32])
+    public cylinder = new CylinderGeometry(...[1, 1, 1, 32])
     public torus = new TorusKnotGeometry(...[1, 0.3])
 
     private textures: Texture[] = []
@@ -169,7 +169,7 @@ export class LakeShaderManager {
         }
         return {
             lightPosition: { value: new Vector3(...this.gui.lightPosition) },
-            lakesTexture: { value: this.textures },
+            lakesTextures: { value: this.textures },
             textureCount: { value: this.textures.length },
         }
     }
