@@ -38,6 +38,7 @@ function getRenderingContext(canvas: HTMLCanvasElement) {
     canvas.height = canvas.clientHeight
     const contextOptions: WebGLContextAttributes = {
         antialias: true,
+        alpha: true,
         powerPreference: 'high-performance',
     }
 
