@@ -16,7 +16,7 @@ const config = {
     devtool: 'source-map',
     devServer: {
         writeToDisk: true,
-        compress: false,
+        compress: true,
         port: 1234,
     },
     optimization: {

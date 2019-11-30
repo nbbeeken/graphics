@@ -21,15 +21,21 @@ class GUIControls {
         public silhouetteWidth: number = 0.01,
         public silhouetteColor: string = '#000000',
         public clearColor: string = '#517777',
+        public ambientGlobal: string = '#666666',
+        public ambientLight: string = '#808080',
+        public diffuseLight: string = '#CCCCCC',
         // System controls
         private forceUpdate = () => this._hasChanged = true,
         public showCanvases = false,
     ) {
         this.gui = new dat.GUI()
-
+        document.body.style.background = this.clearColor
         const proxy = new Proxy(this, {
             set(target, name: keyof GUIControls, value) {
                 target._hasChanged = true
+                if (name === 'clearColor') {
+                    document.body.style.background = target.clearColor
+                }
                 if (Object.getOwnPropertyDescriptor(target, name)?.configurable) {
                     //@ts-ignore
                     target[name] = value
@@ -57,6 +63,11 @@ class GUIControls {
         scribbleSettingsFolder.add(proxy, 'levels', [2, 3, 4]).listen()
         scribbleSettingsFolder.add(proxy, 'silhouetteWidth', 0.0, 0.2, 0.001).listen()
         scribbleSettingsFolder.addColor(proxy, 'silhouetteColor').listen()
+
+        const environmentSettingsFolder = this.gui.addFolder('environment settings')
+        environmentSettingsFolder.addColor(proxy, 'ambientGlobal').listen()
+        environmentSettingsFolder.addColor(proxy, 'ambientLight').listen()
+        environmentSettingsFolder.addColor(proxy, 'diffuseLight').listen()
 
         this.gui.add(proxy, 'forceUpdate')
         this.gui.add(proxy, 'showCanvases').listen()

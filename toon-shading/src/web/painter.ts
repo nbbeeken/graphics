@@ -51,13 +51,18 @@ export class Painter {
         if (gui.hasChanged) {
             this.textures = []
             let substanceLight = selectStandardSubstanceLighting[gui.substance]
+            let environmentLight = {
+                ambientGlobal: new Vector3(...new Color(gui.ambientGlobal).toArray()),
+                ambientLight: new Vector3(...new Color(gui.ambientLight).toArray()),
+                diffuseLight: new Vector3(...new Color(gui.diffuseLight).toArray()),
+            }
             if (gui.useColor) {
                 substanceLight = {
                     ambientMaterial: new Vector3(...new Color(gui.ambientMaterial).toArray().map(v => v * 255)),
                     diffuseMaterial: new Vector3(...new Color(gui.diffuseMaterial).toArray().map(v => v * 255)),
                 }
             }
-            const lakeColors = calculateLakeColors(substanceLight)
+            const lakeColors = calculateLakeColors(substanceLight, environmentLight)
             switch (gui.material) {
                 // Tonal shader selected
                 case 'toon':
@@ -109,18 +114,25 @@ export class Painter {
         for (let i = 0; i < 4; i++) {
             const id = `level-${i}`
             const canvas = document.getElementById(id)
+            const label = document.getElementById(`level-${i}-label`)
             if (canvas) canvas.remove()
+            if (label) label.remove()
         }
     }
 
     showCanvases() {
         this.removeCanvases()
+        const layersSection = document.getElementById('layers')!
         for (let i = 0; i < this.illuminationLayers.length; i++) {
             const layer = this.illuminationLayers[i]
 
+            const label = document.createElement('label')
+            label.innerText = `Shading Level ${i}:`
+            label.id = `level-${i}-label`
+
             layer.context.canvas.id = `level-${i}`
             layer.context.canvas.setAttribute('title', `Level ${i}`)
-            document.body.append(layer.context.canvas)
+            layersSection.append(label, layer.context.canvas)
         }
     }
 
@@ -131,8 +143,8 @@ export class Painter {
         ctx.beginPath()
         ctx.moveTo(0, 0)
         for (let i = 1; i < Painter.dimension / 2; i += 1) {
-            ctx.lineWidth = Math.random() * 3 + level + 1
-            const start = (i - 1) % 2 == 0 ? [Math.abs((i - 1) * 5), 0] : [0, Math.abs((i - 1) * 5)]
+            ctx.lineWidth = Math.random() * 2.3 + level + 1
+            // const start = (i - 1) % 2 == 0 ? [Math.abs((i - 1) * 5), 0] : [0, Math.abs((i - 1) * 5)]
             const [x, y] = i % 2 == 0 ? [i * 5, 0] : [0, i * 5]
             // randomize line width along its path
             // for (let [linePosX, linePosY] = start; linePosX > x && linePosY > y; linePosX += 1, linePosY += 1) {
