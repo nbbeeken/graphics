@@ -1,36 +1,67 @@
 import * as dat from "dat.gui"
+import { SupportedShapes, ShapeOptions } from "./shapes"
+import { SupportedSubstances } from "./lakes"
 type LEVEL_VALUES = 2 | 3 | 4
+
 class GUIControls {
     gui: dat.GUI
     private _hasChanged = true
     constructor(
-        private _lightPositionX: number = 9000,
-        private _lightPositionY: number = 100,
-        private _lightPositionZ: number = 8000,
-        private _material: 'toon' | 'scribble' = 'scribble',
-        private _color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
-        private _geometry: 'box' | 'donut' | 'cylinder' | 'torus' = 'torus',
-        private _levels: LEVEL_VALUES = 3,
-        private _silhouetteWidth: number = 0.01,
-        private _silhouetteColor: string = '#000000',
+        // Display controls
+        public lightPositionX: number = 9000,
+        public lightPositionY: number = 100,
+        public lightPositionZ: number = 8000,
+        public material: 'toon' | 'scribble' = 'scribble',
+        public substance: SupportedSubstances = 'peridot',
+        public useColor: boolean = false,
+        public ambientMaterial: string = '#FFFFFF',
+        public diffuseMaterial: string = '#E0E0E0',
+        public geometry: SupportedShapes = 'torus',
+        public levels: LEVEL_VALUES = 3,
+        public silhouetteWidth: number = 0.01,
+        public silhouetteColor: string = '#000000',
+        public clearColor: string = '#517777',
+        // System controls
+        private forceUpdate = () => this._hasChanged = true,
+        public showCanvases = false,
     ) {
         this.gui = new dat.GUI()
 
-        this.gui.add(this, 'material', ['toon', 'scribble']).listen()
-        this.gui.add(this, 'geometry', ['box', 'donut', 'cylinder', 'torus']).listen()
+        const proxy = new Proxy(this, {
+            set(target, name: keyof GUIControls, value) {
+                target._hasChanged = true
+                if (Object.getOwnPropertyDescriptor(target, name)?.configurable) {
+                    //@ts-ignore
+                    target[name] = value
+                }
+                return true
+            }
+        })
+
+        this.gui.addColor(proxy, 'clearColor').listen()
+        this.gui.add(proxy, 'material', ['toon', 'scribble']).listen()
+        this.gui.add(proxy, 'geometry', ShapeOptions).listen()
 
         const lightPositionFolder = this.gui.addFolder('light position')
-        lightPositionFolder.add(this, 'lightPositionX', -10000, 10000, 10).listen()
-        lightPositionFolder.add(this, 'lightPositionY', -10000, 10000, 10).listen()
-        lightPositionFolder.add(this, 'lightPositionZ', 1, 10000, 10).listen()
+        lightPositionFolder.add(proxy, 'lightPositionX', -10000, 10000, 10).listen()
+        lightPositionFolder.add(proxy, 'lightPositionY', -10000, 10000, 10).listen()
+        lightPositionFolder.add(proxy, 'lightPositionZ', 1, 10000, 10).listen()
 
         const toonSettingsFolder = this.gui.addFolder('toon settings')
-        toonSettingsFolder.add(this, 'color', ['ruby', 'peridot', 'sapphire']).listen()
+        toonSettingsFolder.add(proxy, 'substance', ['ruby', 'peridot', 'sapphire']).listen()
+        toonSettingsFolder.add(proxy, 'useColor').listen()
+        toonSettingsFolder.addColor(proxy, 'ambientMaterial').listen()
+        toonSettingsFolder.addColor(proxy, 'diffuseMaterial').listen()
 
         const scribbleSettingsFolder = this.gui.addFolder('scribble settings')
-        scribbleSettingsFolder.add(this, 'levels', [2, 3, 4]).listen()
-        scribbleSettingsFolder.add(this, 'silhouetteWidth', 0.0, 0.2, 0.001).listen()
-        scribbleSettingsFolder.addColor(this, 'silhouetteColor').listen()
+        scribbleSettingsFolder.add(proxy, 'levels', [2, 3, 4]).listen()
+        scribbleSettingsFolder.add(proxy, 'silhouetteWidth', 0.0, 0.2, 0.001).listen()
+        scribbleSettingsFolder.addColor(proxy, 'silhouetteColor').listen()
+
+        this.gui.add(proxy, 'forceUpdate')
+        this.gui.add(proxy, 'showCanvases').listen()
+
+        return proxy
     }
 
     get hasChanged() {
@@ -43,53 +74,6 @@ class GUIControls {
 
     get lightPosition(): [number, number, number] {
         return [this.lightPositionX, this.lightPositionY, this.lightPositionZ,]
-    }
-
-    get lightPositionX() { return this._lightPositionX }
-    get lightPositionY() { return this._lightPositionY }
-    get lightPositionZ() { return this._lightPositionZ }
-    get material() { return this._material }
-    get color() { return this._color }
-    get geometry() { return this._geometry }
-    get levels() { return +this._levels as LEVEL_VALUES }
-    get silhouetteColor() { return this._silhouetteColor }
-    get silhouetteWidth() { return this._silhouetteWidth }
-
-    set lightPositionX(value) {
-        this._hasChanged = true
-        this._lightPositionX = value
-    }
-    set lightPositionY(value) {
-        this._hasChanged = true
-        this._lightPositionY = value
-    }
-    set lightPositionZ(value) {
-        this._hasChanged = true
-        this._lightPositionZ = value
-    }
-    set material(value) {
-        this._hasChanged = true
-        this._material = value
-    }
-    set color(value) {
-        this._hasChanged = true
-        this._color = value
-    }
-    set geometry(value) {
-        this._hasChanged = true
-        this._geometry = value
-    }
-    set levels(value) {
-        this._hasChanged = true
-        this._levels = +value as LEVEL_VALUES
-    }
-    set silhouetteColor(value: string) {
-        this._hasChanged = true
-        this._silhouetteColor = value
-    }
-    set silhouetteWidth(value) {
-        this._hasChanged = true
-        this._silhouetteWidth = value
     }
 }
 

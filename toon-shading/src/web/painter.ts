@@ -6,15 +6,13 @@ import { Vector3 } from "three/src/math/Vector3"
 import { Texture } from "three/src/textures/Texture"
 import { gui } from "./gui"
 import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
-import { calculateLakeColors, selectStandardMaterialLighting, LakeColors } from "./lakes"
+import { calculateLakeColors, LakeColors, selectStandardSubstanceLighting } from "./lakes"
 import { normalize } from "./utils"
 
 interface CanvasTexturePair {
     context: CanvasRenderingContext2D
     texture: CanvasTexture
 }
-
-let canvasesShown: boolean = false
 
 interface PainterUniforms {
     lightPosition: { value: Vector3 }
@@ -42,7 +40,7 @@ export class Painter {
     get material() {
         // Run updates on fetch
         return new ShaderMaterial({
-            name: `lake${gui.material}Shader`,
+            name: 'painter',
             fragmentShader: Painter.fragmentShader,
             vertexShader: Painter.vertexShader,
             uniforms: this.uniforms
@@ -52,8 +50,14 @@ export class Painter {
     get uniforms(): PainterUniforms {
         if (gui.hasChanged) {
             this.textures = []
-            const materialLight = selectStandardMaterialLighting[gui.color]
-            const lakeColors = calculateLakeColors(materialLight)
+            let substanceLight = selectStandardSubstanceLighting[gui.substance]
+            if (gui.useColor) {
+                substanceLight = {
+                    ambientMaterial: new Vector3(...new Color(gui.ambientMaterial).toArray().map(v => v * 255)),
+                    diffuseMaterial: new Vector3(...new Color(gui.diffuseMaterial).toArray().map(v => v * 255)),
+                }
+            }
+            const lakeColors = calculateLakeColors(substanceLight)
             switch (gui.material) {
                 // Tonal shader selected
                 case 'toon':
@@ -62,8 +66,12 @@ export class Painter {
                 // Scribble shader selected
                 case 'scribble':
                     this.color = new Color(...normalize(lakeColors.illuminated, 255))
-                    this.textures.push(...this.scribble(gui.levels))
-                    this.showCanvases()
+                    this.textures.push(...this.scribble(+gui.levels))
+                    if (gui.showCanvases) {
+                        this.showCanvases()
+                    } else {
+                        this.removeCanvases()
+                    }
                     break
             }
         }
@@ -97,15 +105,22 @@ export class Painter {
         return this.illuminationLayers.map(v => v.texture)
     }
 
-    showCanvases() {
-        if (!canvasesShown) {
-            canvasesShown = true
-            for (let i = 0; i < this.illuminationLayers.length; i++) {
-                const layer = this.illuminationLayers[i]
+    removeCanvases() {
+        for (let i = 0; i < 4; i++) {
+            const id = `level-${i}`
+            const canvas = document.getElementById(id)
+            if (canvas) canvas.remove()
+        }
+    }
 
-                layer.context.canvas.setAttribute('title', `Level ${i}`)
-                document.body.append(layer.context.canvas)
-            }
+    showCanvases() {
+        this.removeCanvases()
+        for (let i = 0; i < this.illuminationLayers.length; i++) {
+            const layer = this.illuminationLayers[i]
+
+            layer.context.canvas.id = `level-${i}`
+            layer.context.canvas.setAttribute('title', `Level ${i}`)
+            document.body.append(layer.context.canvas)
         }
     }
 

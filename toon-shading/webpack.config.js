@@ -20,7 +20,16 @@ const config = {
         port: 1234,
     },
     optimization: {
-        sideEffects: true
+        sideEffects: true,
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        }
     },
     performance: {
         maxAssetSize: 700000,

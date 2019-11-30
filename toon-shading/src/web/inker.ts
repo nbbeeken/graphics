@@ -23,6 +23,7 @@ export class Inker {
 
     get material() {
         return new ShaderMaterial({
+            name: 'inker',
             vertexShader: Inker.vertexShader,
             fragmentShader: Inker.fragmentShader,
             side: BackSide,

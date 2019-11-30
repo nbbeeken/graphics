@@ -1,6 +1,6 @@
 import { Vector3 } from "three/src/math/Vector3"
 
-export interface MaterialLighting {
+export interface SubstanceLighting {
     ambientMaterial: Vector3
     diffuseMaterial: Vector3
 }
@@ -9,18 +9,18 @@ export interface EnvironmentLighting {
     ambientLight: Vector3
     diffuseLight: Vector3
 }
-export interface LakeParameters extends MaterialLighting, EnvironmentLighting { }
+export interface LakeParameters extends SubstanceLighting, EnvironmentLighting { }
 export interface LakeColors { illuminated: [number, number, number], shadowed: [number, number, number] }
 
-export const RUBY = {
+export const RUBY: SubstanceLighting = {
     ambientMaterial: new Vector3(44, 3, 3),
     diffuseMaterial: new Vector3(157, 11, 11),
 }
-export const PERIDOT = {
+export const PERIDOT: SubstanceLighting = {
     ambientMaterial: new Vector3(5, 44, 5),
     diffuseMaterial: new Vector3(19, 157, 19),
 }
-export const SAPPHIRE = {
+export const SAPPHIRE: SubstanceLighting = {
     ambientMaterial: new Vector3(10, 10, 150),
     diffuseMaterial: new Vector3(10, 10, 100),
 }
@@ -30,12 +30,14 @@ const ENV_LIGHT = {
     diffuseLight: new Vector3(0.8, 0.8, 0.8),
 }
 
-export const selectStandardMaterialLighting = {
+export const selectStandardSubstanceLighting = {
     ruby: RUBY,
     peridot: PERIDOT,
     sapphire: SAPPHIRE
 }
 
+export const SubstanceOptions = ['ruby', 'peridot', 'sapphire'] as const
+export type SupportedSubstances = typeof SubstanceOptions[number]
 
 /**
  * `a_g * a_m + a_l * a_m + d_l * d_m`

@@ -1,19 +1,14 @@
 import { Color } from "three/src/math/Color"
-import { Mesh } from "three/src/objects/Mesh"
 import { PerspectiveCamera } from "three/src/cameras/PerspectiveCamera"
 import { Scene } from "three/src/scenes/Scene"
 import { WebGLRenderer } from "three/src/renderers/WebGLRenderer"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
-import { Group } from "three/src/objects/Group"
-import { BufferGeometryLoader } from "three/src/loaders/BufferGeometryLoader"
-
 import * as Stats from "stats.js"
 
 import { gl } from './canvas'
-import { Inker } from "./inker"
-import { Painter } from "./painter"
-import { ShapesSelector } from "./shapes"
+import { ToneShadowMesh } from "./toneMesh"
+import { gui } from "./gui"
 
 var stats = new Stats()
 stats.showPanel(0)
@@ -30,14 +25,7 @@ export async function main() {
     onResize() // set original size
     window.addEventListener('resize', onResize)
 
-    const shapesSelector = new ShapesSelector()
-    const painter = new Painter()
-    const inker = new Inker()
-
-    const object = new Mesh(shapesSelector.geometry, painter.material)
-    const silhouette = new Mesh(shapesSelector.geometry, inker.material)
-    const group = new Group()
-    group.add(object, silhouette)
+    const group = new ToneShadowMesh()
     // Add object to GL Context
     scene.add(group)
 
@@ -48,48 +36,13 @@ export async function main() {
     // zoom out a bit
     camera.position.z = 3200
 
-    object.onBeforeRender = () => {
-        // Every time this specific object is drawn we will update the uniforms to create the drawing
-        object.material = painter.material // implicitly runs updates
-        object.geometry = shapesSelector.geometry // mostly a noop
-        object.material.needsUpdate = true
-    }
-
-    silhouette.onBeforeRender = () => {
-        // Every time this specific object is drawn we will update the uniforms to create the drawing
-        silhouette.material = inker.material // implicitly runs updates
-        silhouette.geometry = shapesSelector.geometry // mostly a noop
-        silhouette.material.needsUpdate = true
-    }
-
-    // Performance
-    // const loader = new BufferGeometryLoader()
-    // loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/json/suzanne_buffergeometry.json', geometry => {
-    //     geometry.computeVertexNormals();
-    //     for (let i = 0; i < 500; i++) {
-    //         const mesh = new Mesh(geometry, painter.material)
-    //         mesh.position.x = Math.random() * 8000 - 4000;
-    //         mesh.position.y = Math.random() * 8000 - 4000;
-    //         mesh.position.z = Math.random() * 8000 - 4000;
-    //         mesh.rotation.x = Math.random() * 2 * Math.PI;
-    //         mesh.rotation.y = Math.random() * 2 * Math.PI;
-    //         mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 50 + 100;
-    //         // objects.push(mesh);
-    //         mesh.onBeforeRender = function () {
-    //             // Every time this specific object is drawn we will update the uniforms to create the drawing
-    //             mesh.material = painter.material // implicitly runs updates
-    //             mesh.material.needsUpdate = true
-    //         }
-    //         scene.add(mesh)
-    //     }
-    // })
-
     function animate() {
         // Animation loop, runs at local computer's FPS
         requestAnimationFrame(animate)
         stats.begin()
 
         controls.update()
+        renderer.setClearColor(gui.clearColor)
         renderer.render(scene, camera)
 
         stats.end()
