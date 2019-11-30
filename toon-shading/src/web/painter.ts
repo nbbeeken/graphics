@@ -63,6 +63,7 @@ export class Painter {
                 case 'scribble':
                     this.color = new Color(...normalize(lakeColors.illuminated, 255))
                     this.textures.push(...this.scribble(gui.levels))
+                    this.showCanvases()
                     break
             }
         }
@@ -115,8 +116,15 @@ export class Painter {
         ctx.beginPath()
         ctx.moveTo(0, 0)
         for (let i = 1; i < Painter.dimension / 2; i += 1) {
-            ctx.lineWidth = Math.random() * 3
+            ctx.lineWidth = Math.random() * 3 + level + 1
+            const start = (i - 1) % 2 == 0 ? [Math.abs((i - 1) * 5), 0] : [0, Math.abs((i - 1) * 5)]
             const [x, y] = i % 2 == 0 ? [i * 5, 0] : [0, i * 5]
+            // randomize line width along its path
+            // for (let [linePosX, linePosY] = start; linePosX > x && linePosY > y; linePosX += 1, linePosY += 1) {
+            //     ctx.lineWidth = Math.random() * 3 + level + 1
+            //     ctx.lineTo(linePosX, linePosY)
+            //     ctx.stroke()
+            // }
             ctx.lineTo(x, y)
         }
         ctx.stroke()
@@ -131,6 +139,7 @@ export class Painter {
         const offset = () => radius - Math.random() * 3
         for (let x = 0; x < Painter.dimension; x += offset()) {
             for (let y = 0; y < Painter.dimension; y += offset()) {
+                ctx.lineWidth = 1 //Math.random() * 3 + level + 1
                 ctx.beginPath()
                 ctx.arc(x, y, radius, 0, 2 * Math.PI)
                 ctx.stroke()

@@ -5,10 +5,10 @@ import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
 import { gui } from "./gui"
 
 export class ShapesSelector {
-    public box = new BoxGeometry(...[1, 1])
-    public cone = new ConeGeometry(...[1, 1, 32])
+    public box = new BoxGeometry(...[10, 10])
+    public cone = new ConeGeometry(...[10, 10, 32])
     public cylinder = new CylinderGeometry(...[1, 1, 1, 32])
-    public torus = new TorusKnotGeometry(...[1, 0.3])
+    public torus = new TorusKnotGeometry(...[1000, 300])
 
     get geometry() {
         // Saved references to geometries

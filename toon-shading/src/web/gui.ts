@@ -4,9 +4,9 @@ class GUIControls {
     gui: dat.GUI
     private _hasChanged = true
     constructor(
-        private _lightPositionX: number = 5,
-        private _lightPositionY: number = 5,
-        private _lightPositionZ: number = 10,
+        private _lightPositionX: number = 9000,
+        private _lightPositionY: number = 100,
+        private _lightPositionZ: number = 8000,
         private _material: 'toon' | 'scribble' = 'scribble',
         private _color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
         private _geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
@@ -20,16 +20,16 @@ class GUIControls {
         this.gui.add(this, 'geometry', ['box', 'cone', 'cylinder', 'torus']).listen()
 
         const lightPositionFolder = this.gui.addFolder('light position')
-        lightPositionFolder.add(this, 'lightPositionX', -10, 10, 1).listen()
-        lightPositionFolder.add(this, 'lightPositionY', -10, 10, 1).listen()
-        lightPositionFolder.add(this, 'lightPositionZ', 0, 20, 0.1).listen()
+        lightPositionFolder.add(this, 'lightPositionX', -10000, 10000, 10).listen()
+        lightPositionFolder.add(this, 'lightPositionY', -10000, 10000, 10).listen()
+        lightPositionFolder.add(this, 'lightPositionZ', 1, 10000, 10).listen()
 
         const toonSettingsFolder = this.gui.addFolder('toon settings')
         toonSettingsFolder.add(this, 'color', ['ruby', 'peridot', 'sapphire']).listen()
 
         const scribbleSettingsFolder = this.gui.addFolder('scribble settings')
         scribbleSettingsFolder.add(this, 'levels', [2, 3, 4]).listen()
-        scribbleSettingsFolder.add(this, 'silhouetteWidth', 0.0, 1.0, 0.001).listen()
+        scribbleSettingsFolder.add(this, 'silhouetteWidth', 0.0, 0.2, 0.001).listen()
         scribbleSettingsFolder.addColor(this, 'silhouetteColor').listen()
     }
 
