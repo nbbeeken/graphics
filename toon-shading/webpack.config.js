@@ -1,11 +1,12 @@
 // @ts-check
 const path = require('path')
 const webpack = require('webpack')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 // @ts-ignore
 const Stylish = require('webpack-stylish')
 const OptimizeThreePlugin = require('@vxna/optimize-three-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 /** @type { import('webpack').Configuration } */
@@ -77,6 +78,8 @@ const config = {
         }),
         // @ts-ignore
         new webpack.NamedModulesPlugin(),
+        // @ts-ignore
+        new CompressionPlugin(),
         new OptimizeThreePlugin(),
         new Stylish()
     ]
