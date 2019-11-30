@@ -9,7 +9,7 @@ class GUIControls {
         private _lightPositionZ: number = 10,
         private _material: 'toon' | 'scribble' = 'scribble',
         private _color: 'ruby' | 'peridot' | 'sapphire' = 'peridot',
-        private _geometry: 'box' | 'cone' | 'cylinder' | 'torus' = 'torus',
+        private _geometry: 'box' | 'donut' | 'cylinder' | 'torus' = 'torus',
         private _levels: LEVEL_VALUES = 3,
         private _silhouetteWidth: number = 0.01,
         private _silhouetteColor: string = '#000000',
@@ -17,7 +17,7 @@ class GUIControls {
         this.gui = new dat.GUI()
 
         this.gui.add(this, 'material', ['toon', 'scribble']).listen()
-        this.gui.add(this, 'geometry', ['box', 'cone', 'cylinder', 'torus']).listen()
+        this.gui.add(this, 'geometry', ['box', 'donut', 'cylinder', 'torus']).listen()
 
         const lightPositionFolder = this.gui.addFolder('light position')
         lightPositionFolder.add(this, 'lightPositionX', -10, 10, 1).listen()

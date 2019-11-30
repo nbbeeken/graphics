@@ -39,8 +39,12 @@ export class Inker {
         out vec3 vertexNormal;
         out vec3 vertexPosition;
 
+        float rand(vec2 co){
+            return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+        }
+
         vec4 silhouette(vec4 relativePosition) {
-            const float ratio = 1.0; // TODO: Change thickness -- artsy styling
+            float ratio = rand(relativePosition.xy); // TODO: Change thickness -- artsy styling
 
             vec3 offsetSilhouette = relativePosition.xyz + lightPosition;
 
