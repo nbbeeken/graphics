@@ -6,7 +6,7 @@ import { Vector3 } from "three/src/math/Vector3"
 import { Texture } from "three/src/textures/Texture"
 import { gui } from "./gui"
 import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
-import { calculateLakeColors, LakeColors, selectStandardSubstanceLighting } from "./lakes"
+import { calculateLakeColors, LakeColors, selectStandardSubstanceLighting, SubstanceLighting } from "./lakes"
 import { normalize } from "./utils"
 
 interface CanvasTexturePair {
@@ -26,8 +26,9 @@ export class Painter {
     private _color: string = 'rbg(125, 105, 125)'
     private static dimension = 512
 
-    private textures: Texture[] = []
+    public customColors?: SubstanceLighting = undefined
 
+    private textures: Texture[] = []
 
     get color() {
         return new Color(this._color)
@@ -61,6 +62,9 @@ export class Painter {
                     ambientMaterial: new Vector3(...new Color(gui.ambientMaterial).toArray().map(v => v * 255)),
                     diffuseMaterial: new Vector3(...new Color(gui.diffuseMaterial).toArray().map(v => v * 255)),
                 }
+            }
+            if (this.customColors) {
+                substanceLight = this.customColors
             }
             const lakeColors = calculateLakeColors(substanceLight, environmentLight)
             switch (gui.material) {

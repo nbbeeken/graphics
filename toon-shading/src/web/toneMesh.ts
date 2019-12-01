@@ -14,11 +14,11 @@ export class ToneShadowMesh extends Group {
     public object: Mesh
     public shadow: Mesh
 
-    constructor() {
+    constructor(complexGeometry?: any) {
         super()
         this.painter = new Painter()
         this.inker = new Inker()
-        this.shapesSelector = new ShapesSelector()
+        this.shapesSelector = new ShapesSelector(complexGeometry)
 
         this.object = new Mesh(this.shapesSelector.geometry, this.painter.material)
         this.shadow = new Mesh(this.shapesSelector.geometry, this.inker.material)
