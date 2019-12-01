@@ -44,8 +44,8 @@ export class Inker {
             return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
         }
 
-        vec4 silhouette(vec4 relativePosition) {
-            float ratio = rand(relativePosition.xy); // TODO: Change thickness -- artsy styling
+        vec4 silhouette(vec4 relativePosition, float ratio) {
+
 
             vec3 offsetSilhouette = relativePosition.xyz + lightPosition;
 
@@ -61,8 +61,12 @@ export class Inker {
             vertexNormal = mat3(transpose(inverse(modelViewMatrix))) * normal;
             vertexPosition = vec3(modelMatrix * vec4(position, 1.0));
 
+            // For artistic effect make the silhouette thicker at lower cos values
+            vec3 lightDirection = normalize(lightPosition - vertexPosition);
+            float ratio = 1.0 - clamp(dot(normalize(vertexNormal), lightDirection), 0.0, 1.0);
+
             vec4 relativePosition = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            gl_Position = silhouette(relativePosition);
+            gl_Position = silhouette(relativePosition, ratio);
         }
     `
     static fragmentShader = `
