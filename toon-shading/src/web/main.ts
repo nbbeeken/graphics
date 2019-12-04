@@ -26,12 +26,12 @@ export async function main() {
 
     onResize() // set original size
     window.addEventListener('resize', onResize)
-    const p = new PerformanceTonalShading()
-    await p.run(scene)
+    // const p = new PerformanceTonalShading()
+    // await p.run(scene)
 
     // // Add object to GL Context
-    // const group = new ToneShadowMesh()
-    // scene.add(group)
+    const group = new ToneShadowMesh()
+    scene.add(group)
 
     // Enable mouse controls
     const controls = new OrbitControls(camera, renderer.domElement)

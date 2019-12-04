@@ -28,10 +28,9 @@ export class PerformanceTonalShading {
 
             shuttle.traverse(child => {
                 if (child instanceof Mesh) {
-                    child.material = painter.material
+                    child.material = painter
                     child.onBeforeRender = () => {
-                        child.material = painter.material
-                        child.material.needsUpdate = true
+                        child.material = painter
                     }
                 }
             })
@@ -41,10 +40,9 @@ export class PerformanceTonalShading {
             const inker = new Inker()
             shuttleShadow.traverse(child => {
                 if (child instanceof Mesh) {
-                    child.material = inker.material
+                    child.material = inker
                     child.onBeforeRender = () => {
-                        child.material = inker.material
-                        child.material.needsUpdate = true
+                        child.material = inker
                     }
                 }
             })
