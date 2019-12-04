@@ -24,6 +24,11 @@ class GUIControls {
         public ambientGlobal: string = '#666666',
         public ambientLight: string = '#808080',
         public diffuseLight: string = '#CCCCCC',
+        // Motion Lines
+        public velocityX: number = 100,
+        public velocityY: number = 100,
+        public flipDirection: boolean = true,
+        public lineCount: number = 1,
         // System controls
         private forceUpdate = () => this._hasChanged = true,
         public showCanvases = false,
@@ -69,6 +74,12 @@ class GUIControls {
         environmentSettingsFolder.addColor(proxy, 'ambientLight').listen()
         environmentSettingsFolder.addColor(proxy, 'diffuseLight').listen()
 
+        const animatorSettings = this.gui.addFolder('animation')
+        animatorSettings.add(proxy, 'velocityX', -1000, 1000, 10).listen()
+        animatorSettings.add(proxy, 'velocityY', -1000, 1000, 10).listen()
+        animatorSettings.add(proxy, 'lineCount', 0, 200, 1).listen()
+        animatorSettings.add(proxy, 'flipDirection').listen()
+
         this.gui.add(proxy, 'forceUpdate')
         this.gui.add(proxy, 'showCanvases').listen()
 
@@ -85,6 +96,9 @@ class GUIControls {
 
     get lightPosition(): [number, number, number] {
         return [this.lightPositionX, this.lightPositionY, this.lightPositionZ,]
+    }
+    get velocity(): [number, number] {
+        return [this.velocityX, this.velocityY]
     }
 }
 
