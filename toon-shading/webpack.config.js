@@ -59,7 +59,19 @@ const config = {
                 ],
             },
             {
-                test: /\.(gif|png|jpe?g|svg|cur|obj|json)$/i,
+                type: 'javascript/auto',
+                test: /\.json$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: "./assets/[name].[ext]"
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(gif|png|jpe?g|svg|cur|obj)$/i,
                 include: path.resolve(__dirname, 'src', 'assets'),
                 use: [
                     'file-loader',

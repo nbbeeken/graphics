@@ -1,13 +1,11 @@
 import { Scene } from "three/src/scenes/Scene"
 import { Mesh } from "three/src/objects/Mesh"
-import { ObjectLoader } from "three/src/loaders/ObjectLoader"
 import { Object3D } from "three/src/core/Object3D"
 
-import shuttleURL from '../assets/shuttle.obj'
+import shuttleURL from '../assets/shuttle.json'
 import { Painter } from "./painter"
 import { Inker } from "./inker"
-import { Material } from "three/src/materials/Material"
-import { Color, Vector3 } from "three"
+import { Color, Vector3, ObjectLoader } from "three"
 
 export class PerformanceTonalShading {
 
