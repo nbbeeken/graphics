@@ -10,7 +10,9 @@ import { gl } from './canvas'
 import { ToneShadowMesh } from "./toneMesh"
 import { gui } from "./gui"
 
-var stats = new Stats()
+import { PerformanceTonalShading } from "./performance"
+
+const stats = new Stats()
 stats.showPanel(0)
 document.body.appendChild(stats.dom)
 
@@ -24,9 +26,11 @@ export async function main() {
 
     onResize() // set original size
     window.addEventListener('resize', onResize)
+    // const p = new PerformanceTonalShading()
+    // await p.run(scene)
 
+    // // Add object to GL Context
     const group = new ToneShadowMesh()
-    // Add object to GL Context
     scene.add(group)
 
     // Enable mouse controls

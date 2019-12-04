@@ -59,7 +59,19 @@ const config = {
                 ],
             },
             {
-                test: /\.(gif|png|jpe?g|svg|cur)$/i,
+                type: 'javascript/auto',
+                test: /\.json$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: "./assets/[name].[ext]"
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(gif|png|jpe?g|svg|cur|obj)$/i,
                 include: path.resolve(__dirname, 'src', 'assets'),
                 use: [
                     'file-loader',
@@ -68,7 +80,7 @@ const config = {
         ],
     },
     resolve: {
-        extensions: ['.ts', '.js', '.css', '.png', '.svg', '.cur'],
+        extensions: ['.ts', '.js', '.css', '.png', '.svg', '.cur', '.obj', '.json'],
     },
     output: {
         filename: 'bundle.js',

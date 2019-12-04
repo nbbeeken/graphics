@@ -4,6 +4,7 @@ import { Color } from "three/src/math/Color"
 import { Vector3 } from "three/src/math/Vector3"
 
 import { gui } from "./gui"
+import { Material } from "three"
 
 interface InkerUniforms {
     silhouetteColor: { value: Color }
@@ -11,9 +12,13 @@ interface InkerUniforms {
     [uniform: string]: { value: any }
 }
 
-export class Inker {
+export class Inker extends ShaderMaterial {
+    name = 'inker'
+    side = BackSide
+    transparent = true
 
-    get uniforms(): InkerUniforms {
+    updateUniforms(): InkerUniforms {
+        this.needsUpdate = true
         return {
             silhouetteColor: { value: new Color(gui.silhouetteColor) },
             silhouetteWidth: { value: gui.silhouetteWidth },
@@ -21,19 +26,14 @@ export class Inker {
         }
     }
 
-    get material() {
-        return new ShaderMaterial({
-            name: 'inker',
-            vertexShader: Inker.vertexShader,
-            fragmentShader: Inker.fragmentShader,
-            side: BackSide,
-            uniforms: this.uniforms,
-            transparent: true,
-        })
+    beforeRender = ({ }, { }, { }, { }, material: Material) => {
+        if (material instanceof Inker) {
+            Object.assign(material.uniforms, this.updateUniforms())
+        }
     }
 
     // Shaders
-    static vertexShader = `
+    vertexShader = `
         uniform float silhouetteWidth;
         uniform vec3 lightPosition;
 
@@ -69,7 +69,7 @@ export class Inker {
             gl_Position = silhouette(relativePosition, ratio);
         }
     `
-    static fragmentShader = `
+    fragmentShader = `
         uniform vec3 silhouetteColor;
         uniform vec3 lightPosition;
 

@@ -1,7 +1,7 @@
 import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
 import { Vector3 } from "three/src/math/Vector3"
 import { gui } from "./gui"
-import { Geometry } from "three"
+import { Geometry, Mesh } from "three"
 import { ShapesSelector } from "./shapes"
 
 export class Animator {
@@ -12,10 +12,11 @@ export class Animator {
         lastLineCount: 1,
         lastFlipDirection: !gui.flipDirection
     }
-    get lineGeometries() {
-        this._geometries = []
 
-        let currentShapeVertices = ShapesSelector.geometry.vertices.slice(0)
+    get lines() { return this._geometries }
+
+    makeLineGeometries(mesh: Mesh) {
+        let currentShapeVertices = (mesh.geometry as Geometry).vertices.slice(0)
         const axisSort = this.selectBestAxis()
         currentShapeVertices.sort(
             (a, b) => gui.flipDirection ? a[axisSort] - b[axisSort] : b[axisSort] - a[axisSort]
@@ -29,7 +30,13 @@ export class Animator {
         }
 
         for (let i = 0; i < randomVertices.length; i++) {
-            const geo = new Geometry()
+            let geo
+            if (i < this._geometries.length) {
+                geo = this._geometries[i]
+                geo.vertices.length = 0 // clear vertices
+            } else {
+                geo = new Geometry()
+            }
             geo.name = `line_${i}`
             const start = randomVertices[i]
             const end = new Vector3(

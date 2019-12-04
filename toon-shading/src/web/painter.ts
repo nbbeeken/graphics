@@ -6,8 +6,9 @@ import { Vector3 } from "three/src/math/Vector3"
 import { Texture } from "three/src/textures/Texture"
 import { gui } from "./gui"
 import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
-import { calculateLakeColors, LakeColors, selectStandardSubstanceLighting } from "./lakes"
+import { calculateLakeColors, LakeColors, selectStandardSubstanceLighting, SubstanceLighting } from "./lakes"
 import { normalize } from "./utils"
+import { Material } from "three"
 
 interface CanvasTexturePair {
     context: CanvasRenderingContext2D
@@ -21,13 +22,16 @@ interface PainterUniforms {
     [uniform: string]: { value: any }
 }
 
-export class Painter {
+export class Painter extends ShaderMaterial {
+    name = 'painter'
+
     private illuminationLayers: CanvasTexturePair[] = []
     private _color: string = 'rbg(125, 105, 125)'
     private static dimension = 512
 
-    private textures: Texture[] = []
+    public customColors?: SubstanceLighting = undefined
 
+    private textures: Texture[] = []
 
     get color() {
         return new Color(this._color)
@@ -37,17 +41,9 @@ export class Painter {
         this._color = value.getStyle()
     }
 
-    get material() {
-        // Run updates on fetch
-        return new ShaderMaterial({
-            name: 'painter',
-            fragmentShader: Painter.fragmentShader,
-            vertexShader: Painter.vertexShader,
-            uniforms: this.uniforms
-        })
-    }
-
-    get uniforms(): PainterUniforms {
+    updateUniforms(): PainterUniforms {
+        this.needsUpdate = true
+            ; (this as any).uniformsNeedUpdate = true
         if (gui.hasChanged) {
             this.textures = []
             let substanceLight = selectStandardSubstanceLighting[gui.substance]
@@ -61,6 +57,9 @@ export class Painter {
                     ambientMaterial: new Vector3(...new Color(gui.ambientMaterial).toArray().map(v => v * 255)),
                     diffuseMaterial: new Vector3(...new Color(gui.diffuseMaterial).toArray().map(v => v * 255)),
                 }
+            }
+            if (this.customColors) {
+                substanceLight = this.customColors
             }
             const lakeColors = calculateLakeColors(substanceLight, environmentLight)
             switch (gui.material) {
@@ -84,6 +83,12 @@ export class Painter {
             lightPosition: { value: new Vector3(...gui.lightPosition) },
             lakesTextures: { value: this.textures },
             textureCount: { value: this.textures.length },
+        }
+    }
+
+    beforeRender = ({ }, { }, { }, { }, material: Material) => {
+        if (material instanceof Painter) {
+            Object.assign(material.uniforms, this.updateUniforms())
         }
     }
 
@@ -187,7 +192,7 @@ export class Painter {
         return { context, texture }
     }
 
-    static vertexShader = `
+    vertexShader = `
         out vec3 vertexNormal;
         out vec3 vertexPosition;
         out vec2 vertexUV;
@@ -200,7 +205,7 @@ export class Painter {
         }
     `
 
-    static fragmentShader = `
+    fragmentShader = `
         // Defines
         #define MAX_SHADING_LEVELS 4
         #define ERROR_COLOR vec3(0.5, 0.4, 0.5)
