@@ -7,7 +7,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import * as Stats from "stats.js"
 
 import { gl } from './canvas'
-import { TonalObject3D } from "./toneMesh"
+import { TonalObject3D } from "./tonal"
 import { gui } from "./gui"
 import { Vector3 } from "three"
 
