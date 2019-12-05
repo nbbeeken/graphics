@@ -25,7 +25,7 @@ class GUIControls {
         public ambientLight: string = '#808080',
         public diffuseLight: string = '#CCCCCC',
         // Motion Lines
-        public animatorsNote: string = 'No lines w/ objs > 1, perf is bad'
+        public animatorsNote: string = 'No lines w/ objs > 1, perf is bad',
         public velocityX: number = 1000,
         public velocityY: number = 1000,
         public flipDirection: boolean = true,
