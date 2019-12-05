@@ -32,7 +32,9 @@ class GUIControls {
         public lineCount: number = 0,
         public showLines = false,
         // Performance Tests
-        public objectCount: number = 1,
+        public objectCount: number = 0,
+        public gather = false,
+        public gatherSpeed = 20,
         // System controls
         private forceUpdate = () => this._hasChanged = true,
         public showCanvases = false,
@@ -56,7 +58,9 @@ class GUIControls {
         this.gui.addColor(proxy, 'clearColor').listen()
         this.gui.add(proxy, 'material', ['toon', 'scribble']).listen()
         this.gui.add(proxy, 'geometry', ShapeOptions).listen()
-        this.gui.add(proxy, 'objectCount', 0, 9 ** 3, 1).listen()
+        this.gui.add(proxy, 'objectCount', 0, 11 ** 3, 1).listen()
+        this.gui.add(proxy, 'gather').listen()
+        this.gui.add(proxy, 'gatherSpeed', 1, 100, 1).listen()
 
         const lightPositionFolder = this.gui.addFolder('light position')
         lightPositionFolder.add(proxy, 'lightPositionX', -10000, 10000, 10).listen()

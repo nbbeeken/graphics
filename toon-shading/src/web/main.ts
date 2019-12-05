@@ -19,8 +19,10 @@ const scene = new Scene()
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 100000)
 const renderer = new WebGLRenderer({ canvas: gl.canvas, context: gl })
 const BACKGROUND_COLOR = new Color(0.2, 0.3, 0.3)
-const OFFSET_FACTOR = [0, 5000, -5000, 10000, -10000, 15000, -15000, 20000, -20000]
+const OFFSET_FACTOR = [0, 5000, -5000, 10000, -10000, 15000, -15000, 20000, -20000, 25000, -25000]
 const OBJECT_ID_STACK: string[] = []
+
+interface PerfData { fps: number, triangles: number }
 
 export async function main() {
     renderer.setClearColor(BACKGROUND_COLOR)
@@ -38,18 +40,24 @@ export async function main() {
     let numOfObjects = 0
     let offsetCount = 0
     let linesBeingShown = gui.showLines
-    // const OFFSET_FACTOR = [0, ...(new Array(7)).fill(null).map((_, i) => (i % 2 === 0 ? -i : i) * 5000)]
-    function animate() {
+    let fps = 0
+    let prevTime = performance.now()
+
+    let perfMeasurements: PerfData[] = []
+    let output = false
+
+    function animate(nowTime: number) {
         // Animation loop, runs at local computer's FPS
         requestAnimationFrame(animate)
+        fps++
         stats.begin()
 
-        if (numOfObjects !== gui.objectCount) {
-            const delta = gui.objectCount - scene.children.length
-            for (let i = 0; i < Math.abs(delta); i++) {
-                if (delta < 0) {
+        const deltaObjectCount = gui.objectCount - scene.children.length
+        if (deltaObjectCount !== 0) {
+            for (let i = 0; i < Math.abs(deltaObjectCount); i++) {
+                if (deltaObjectCount < 0) {
                     // remove
-                    if (OBJECT_ID_STACK.length > 1) {
+                    if (OBJECT_ID_STACK.length > 0) {
                         scene.remove(scene.getObjectByProperty('uuid', OBJECT_ID_STACK.pop()!)!)
                     }
                     offsetCount--
@@ -60,7 +68,6 @@ export async function main() {
                 }
             }
             numOfObjects = gui.objectCount
-            console.log(renderer.info.render.triangles)
         }
 
         controls.update()
@@ -78,9 +85,24 @@ export async function main() {
         }
 
         stats.end()
+        if (gui.gather && nowTime > (prevTime + 1000)) {
+            prevTime = nowTime
+            perfMeasurements.push({ fps, triangles: renderer.info.render.triangles })
+            fps = 0
+            gui.objectCount += gui.gatherSpeed
+        }
+
+        if (perfMeasurements.length > (11 ** 3 / gui.gatherSpeed) && !output) {
+            console.table(perfMeasurements)
+            let p = document.createElement('p')
+            p.textContent = JSON.stringify(perfMeasurements)
+            document.body.append(p)
+            gui.gather = false
+            output = true
+        }
     }
 
-    animate()
+    animate(prevTime)
 }
 
 function newTonalObject(offsetCount: number) {
