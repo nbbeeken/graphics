@@ -25,10 +25,12 @@ class GUIControls {
         public ambientLight: string = '#808080',
         public diffuseLight: string = '#CCCCCC',
         // Motion Lines
-        public velocityX: number = 100,
-        public velocityY: number = 100,
+        public animatorsNote: string = 'No lines w/ objs > 1, perf is bad'
+        public velocityX: number = 1000,
+        public velocityY: number = 1000,
         public flipDirection: boolean = true,
-        public lineCount: number = 1,
+        public lineCount: number = 0,
+        public showLines = false,
         // Performance Tests
         public objectCount: number = 1,
         // System controls
@@ -54,7 +56,7 @@ class GUIControls {
         this.gui.addColor(proxy, 'clearColor').listen()
         this.gui.add(proxy, 'material', ['toon', 'scribble']).listen()
         this.gui.add(proxy, 'geometry', ShapeOptions).listen()
-        this.gui.add(proxy, 'objectCount', 0, 11 ** 3, 1).listen()
+        this.gui.add(proxy, 'objectCount', 0, 9 ** 3, 1).listen()
 
         const lightPositionFolder = this.gui.addFolder('light position')
         lightPositionFolder.add(proxy, 'lightPositionX', -10000, 10000, 10).listen()
@@ -78,9 +80,11 @@ class GUIControls {
         environmentSettingsFolder.addColor(proxy, 'diffuseLight').listen()
 
         const animatorSettings = this.gui.addFolder('animation')
+        animatorSettings.add(proxy, 'animatorsNote')
         animatorSettings.add(proxy, 'velocityX', -1000, 1000, 10).listen()
         animatorSettings.add(proxy, 'velocityY', -1000, 1000, 10).listen()
-        animatorSettings.add(proxy, 'lineCount', 0, 200, 1).listen()
+        animatorSettings.add(proxy, 'lineCount', 0, 20, 1).listen()
+        animatorSettings.add(proxy, 'showLines').listen()
         animatorSettings.add(proxy, 'flipDirection').listen()
 
         this.gui.add(proxy, 'forceUpdate')
