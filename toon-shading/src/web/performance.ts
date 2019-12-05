@@ -18,8 +18,22 @@ export class PerformanceTonalShading {
 
     async run(scene: Scene) {
         let shuttleBase = await this.loadComplex()
+
+        let geo
+        shuttleBase.traverse(ch => {
+            if (ch.type === 'Mesh') {
+                //@ts-ignore
+                geo = ch.geometry
+            } else {
+                console.log(ch)
+            }
+        })
+        let combine = new Mesh(geo)
+        console.log(JSON.stringify(combine.toJSON()))
+
+
         for (let i = 0; i < 5; i++) {
-            const shuttle = shuttleBase.clone(true)
+            const shuttle = combine.clone(true)
             const painter = new Painter()
             painter.customColors = {
                 ambientMaterial: new Vector3(...new Color(Math.random() * 0xFFFFFF).toArray().map(v => v * 255)),

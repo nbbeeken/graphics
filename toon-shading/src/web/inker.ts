@@ -2,9 +2,9 @@ import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
 import { BackSide } from "three/src/constants"
 import { Color } from "three/src/math/Color"
 import { Vector3 } from "three/src/math/Vector3"
+import { Material } from "three/src/materials/Material"
 
 import { gui } from "./gui"
-import { Material } from "three"
 
 interface InkerUniforms {
     silhouetteColor: { value: Color }

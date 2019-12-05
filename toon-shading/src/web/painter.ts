@@ -4,11 +4,12 @@ import { DataTexture } from "three/src/textures/DataTexture"
 import { RGBFormat, UnsignedByteType } from "three/src/constants"
 import { Vector3 } from "three/src/math/Vector3"
 import { Texture } from "three/src/textures/Texture"
-import { gui } from "./gui"
 import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
+import { Material } from "three/src/materials/Material"
+
+import { gui } from "./gui"
 import { calculateLakeColors, LakeColors, selectStandardSubstanceLighting, SubstanceLighting } from "./lakes"
 import { normalize } from "./utils"
-import { Material } from "three"
 
 interface CanvasTexturePair {
     context: CanvasRenderingContext2D
@@ -24,26 +25,16 @@ interface PainterUniforms {
 
 export class Painter extends ShaderMaterial {
     name = 'painter'
-
     private illuminationLayers: CanvasTexturePair[] = []
-    private _color: string = 'rbg(125, 105, 125)'
     private static dimension = 512
 
     public customColors?: SubstanceLighting = undefined
 
     private textures: Texture[] = []
 
-    get color() {
-        return new Color(this._color)
-    }
-
-    set color(value) {
-        this._color = value.getStyle()
-    }
-
     updateUniforms(): PainterUniforms {
-        this.needsUpdate = true
-            ; (this as any).uniformsNeedUpdate = true
+        this.needsUpdate = true;
+        (this as any).uniformsNeedUpdate = true
         if (gui.hasChanged) {
             this.textures = []
             let substanceLight = selectStandardSubstanceLighting[gui.substance]
@@ -69,8 +60,8 @@ export class Painter extends ShaderMaterial {
                     break
                 // Scribble shader selected
                 case 'scribble':
-                    this.color = new Color(...normalize(lakeColors.illuminated, 255))
-                    this.textures.push(...this.scribble(+gui.levels))
+                    const color = new Color(...normalize(lakeColors.illuminated, 255))
+                    this.textures.push(...this.scribble(+gui.levels, color))
                     if (gui.showCanvases) {
                         this.showCanvases()
                     } else {
@@ -102,13 +93,15 @@ export class Painter extends ShaderMaterial {
     /**
      * Scribbles procedurally on a canvas to create artistic effect
      */
-    scribble(levels: number) {
-        this.illuminationLayers = (new Array(levels)).fill(null).map(_ => this.makeTexCanvas())
+    scribble(levels: number, startingColor: Color) {
+        this.illuminationLayers = (new Array(levels)).fill(null).map(
+            (_, level) => this.makeTexCanvas(level, startingColor)
+        )
 
         for (let level = 0; level < this.illuminationLayers.length; level++) {
             const ctx = this.illuminationLayers[level].context
             const subtractAmount = [0.1, 0.1, 0.1].map(cv => cv * (level + 1))
-            const color = this.color.sub(new Color(...subtractAmount)).getStyle()
+            const color = startingColor.sub(new Color(...subtractAmount)).getStyle()
             this.zigzag(level, ctx, color)
             this.pointillism(level, ctx, color)
         }
@@ -135,8 +128,6 @@ export class Painter extends ShaderMaterial {
             label.innerText = `Shading Level ${i}:`
             label.id = `level-${i}-label`
 
-            layer.context.canvas.id = `level-${i}`
-            layer.context.canvas.setAttribute('title', `Level ${i}`)
             layersSection.append(label, layer.context.canvas)
         }
     }
@@ -181,12 +172,14 @@ export class Painter extends ShaderMaterial {
         ctx.restore()
     }
 
-    private makeTexCanvas(): CanvasTexturePair {
+    private makeTexCanvas(level: number, startingColor: Color): CanvasTexturePair {
         let canvas = document.createElement('canvas')
+        canvas.id = `level-${level}`
+        canvas.setAttribute('title', `Level ${level}`)
         canvas.height = Painter.dimension
         canvas.width = Painter.dimension
         let context = canvas.getContext('2d')!
-        context.fillStyle = this.color.getStyle() //new Color(Math.random(), Math.random(), Math.random()).getStyle()
+        context.fillStyle = startingColor.getStyle() //new Color(Math.random(), Math.random(), Math.random()).getStyle()
         context.fillRect(0, 0, Painter.dimension, Painter.dimension)
         let texture = new CanvasTexture(canvas)
         return { context, texture }

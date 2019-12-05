@@ -11,7 +11,7 @@ class GUIControls {
         public lightPositionX: number = 9000,
         public lightPositionY: number = 100,
         public lightPositionZ: number = 8000,
-        public material: 'toon' | 'scribble' = 'scribble',
+        public material: 'toon' | 'scribble' = 'toon',
         public substance: SupportedSubstances = 'peridot',
         public useColor: boolean = false,
         public ambientMaterial: string = '#FFFFFF',
@@ -29,6 +29,8 @@ class GUIControls {
         public velocityY: number = 100,
         public flipDirection: boolean = true,
         public lineCount: number = 1,
+        // Performance Tests
+        public objectCount: number = 1,
         // System controls
         private forceUpdate = () => this._hasChanged = true,
         public showCanvases = false,
@@ -52,6 +54,7 @@ class GUIControls {
         this.gui.addColor(proxy, 'clearColor').listen()
         this.gui.add(proxy, 'material', ['toon', 'scribble']).listen()
         this.gui.add(proxy, 'geometry', ShapeOptions).listen()
+        this.gui.add(proxy, 'objectCount', 0, 11 ** 3, 1).listen()
 
         const lightPositionFolder = this.gui.addFolder('light position')
         lightPositionFolder.add(proxy, 'lightPositionX', -10000, 10000, 10).listen()

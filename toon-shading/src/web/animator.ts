@@ -1,8 +1,8 @@
-import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
 import { Vector3 } from "three/src/math/Vector3"
+import { Geometry } from "three/src/core/Geometry"
+import { Mesh } from "three/src/objects/Mesh"
+
 import { gui } from "./gui"
-import { Geometry, Mesh } from "three"
-import { ShapesSelector } from "./shapes"
 
 export class Animator {
     private _geometries: Geometry[] = []
