@@ -28,4 +28,4 @@ Refer to the [readme inside](toon-shading/README.md) for information on how to r
 
 ## Reference
 
-> Adam Lake, Carl Marshall, Mark Harris, and Marc Blackstein. "Stylized Rendering Techniques for Scalable Real-Time 3D Animation." Proceedings of the First International Symposium on Non-Photorealistic Animation and Rendering - NPAR 00, 2000. <https://doi.org/10.1145/340916.340918.>
+> Adam Lake, Carl Marshall, Mark Harris, and Marc Blackstein. "Stylized Rendering Techniques for Scalable Real-Time 3D Animation." Proceedings of the First International Symposium on Non-Photorealistic Animation and Rendering - NPAR 00, 2000. <http://www.markmark.net/npar/npar2000_lake_et_al.pdf>
