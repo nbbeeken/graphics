@@ -2,9 +2,13 @@
 
 In `toon-shading` is a typescript webgl project that emulates the work described in the 2000 paper __Stylized Rendering Techniques for Scalable Real-Time 3D Animation__.
 
-The current production build of the project can be found in the `docs/` folder. A quick way to try it out is to just open the `docs/index.html` file in a modern browser.
+You can see the live demo here: <https://nbbeeken.github.io/graphics/>
 
-Refer to the [readme inside](toon-shading/README.md) for information on how to run the project locally
+The current production build of the project can be found in the `docs/` folder.
+
+A quick way to try it out locally is to clone this repo and open the `docs/index.html` file in a modern browser.
+
+Refer to the [readme inside](toon-shading/README.md) for information on how to run / build the project locally.
 
 ## Support
 
