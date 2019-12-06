@@ -1,6 +1,6 @@
 # Neal's Graphics Experiment
 
-In `toon-shading` is a typescript webgl project that emulates the work described in the 2000 paper __Stylized Rendering Techniques for Scalable Real-Time 3D Animation__.
+In `toon-shading/` is a typescript webgl project that emulates the work described in the 2000 paper __Stylized Rendering Techniques for Scalable Real-Time 3D Animation__.
 
 You can see the live demo here: <https://nbbeeken.github.io/graphics/>
 

@@ -8,6 +8,8 @@
 
 ### Get Dependencies
 
+All commands should be run while in the `toon-shading/` directory.
+
 This may take a minute:
 
 ```sh
@@ -28,8 +30,8 @@ Wanna know more about how the pipeline works follow this guide:
 
 - In [`src/web/main.ts`](src/web/main.ts) is where the project begins with a very un-web-like main function.
   - After initializing the controls, canvas and various counters the animation loop is started. Using the web api `requestAnimationFrame` we are guaranteed native framerate animations.
-- In [`src/web/lakes.ts`](src/web/lakes.ts) is where the lake shading algorithm is implemented (at least the color calculations).
-  - Using the formula from the paper I have two functions for getting the illuminated and shaded colors for an object, this is used by the painter.
+- In [`src/web/lakes.ts`](src/web/lakes.ts) is where the _Lake's Shading_ algorithm is implemented (at least the color calculations).
+  - Using the formula from the paper I have two functions for getting the illuminated and shaded colors for an object, these are used by the painter.
 - In [`src/web/painter.ts`](src/web/painter.ts)
   - Using colors provided by lake calculations this class is responsible for setting the correct uniform values on each frame.
   - The vertex and fragment shaders are properties of this class capable of dealing with the toon and scribble shading features.
