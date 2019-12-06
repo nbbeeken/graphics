@@ -1,0 +1,40 @@
+:root {
+    --bg-color: #fff;
+    --fg-color: #000;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+html,
+body,
+main {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    flex-wrap: wrap;
+    color: #775151;
+    text-shadow: 1px 0px #777751;
+    font-family: monospace;
+    font-size: 1.15em;
+}
+
+#display0 {
+    height: 100vh;
+    width: 100vw;
+    flex-basis: 100%;
+}
+
+#layers {
+    display: flex;
+    margin-top: 16px;
+    align-items: center;
+    justify-content: space-around;
+    width: 100vw;
+}
+
+
+/*# sourceMappingURL=main.css.map*/
