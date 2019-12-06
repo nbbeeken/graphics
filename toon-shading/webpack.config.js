@@ -13,10 +13,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const config = {
     stats: false,
     entry: ['./src/index.ts', './src/main.css'],
-    devtool: 'source-map',
+    devtool: 'cheap-source-map',
     devServer: {
         writeToDisk: true,
-        compress: true,
+        compress: false,
         port: 1234,
     },
     optimization: {
@@ -43,32 +43,12 @@ const config = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.(glsl|vs|fs|vert|frag)$/,
-                exclude: /node_modules/,
-                use: [
-                    'raw-loader',
-                    'glslify-loader'
-                ]
-            },
-            {
                 test: /\.css$/,
                 use: [
                     'style-loader',
                     MiniCssExtractPlugin.loader,
                     'css-loader',
                 ],
-            },
-            {
-                type: 'javascript/auto',
-                test: /\.json$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            name: "./assets/[name].[ext]"
-                        }
-                    }
-                ]
             },
             {
                 test: /\.(gif|png|jpe?g|svg|cur|obj)$/i,
@@ -83,6 +63,7 @@ const config = {
         extensions: ['.ts', '.js', '.css', '.png', '.svg', '.cur', '.obj', '.json'],
     },
     output: {
+        chunkFilename: '[name].bundle.js',
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
     },
@@ -99,8 +80,6 @@ const config = {
         }),
         // @ts-ignore
         new webpack.NamedModulesPlugin(),
-        // @ts-ignore
-        new CompressionPlugin(),
         new OptimizeThreePlugin(),
         new Stylish()
     ]

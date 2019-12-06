@@ -78,16 +78,14 @@ export class Animator {
             return
         }
         const g = geometry as BufferGeometry
-        const vertices = g.attributes.position.array
+        const vertices = g.attributes.position.array as Array<number>
         const start = new Vector3(vertices[0], vertices[1], vertices[2])
         const end = new Vector3(
             start.x - gui.velocityX,
             start.y - gui.velocityY,
             start.z,
         )
-        //@ts-ignore
         vertices[3] = end.x
-        //@ts-ignore
         vertices[4] = end.y
         //@ts-ignore
         g.attributes.position.needsUpdate = true

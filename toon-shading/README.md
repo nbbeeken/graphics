@@ -13,6 +13,6 @@ CSE 528 Computer Graphics
 
 ## Libraries Used:
 
-- [TWGL.js](https://twgljs.org/) MIT License
+- [three.js](https://threejs.org/) MIT License
 - [Dat.gui](https://github.com/dataarts/dat.gui) Apache License 2.0
 - [Stats.js](http://mrdoob.github.io/stats.js/) MIT License

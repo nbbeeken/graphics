@@ -97,7 +97,6 @@ export class Painter extends ShaderMaterial {
         this.illuminationLayers = (new Array(levels)).fill(null).map(
             (_, level) => this.makeTexCanvas(level, startingColor)
         )
-
         for (let level = 0; level < this.illuminationLayers.length; level++) {
             const ctx = this.illuminationLayers[level].context
             const subtractAmount = [0.1, 0.1, 0.1].map(cv => cv * (level + 1))
@@ -123,11 +122,9 @@ export class Painter extends ShaderMaterial {
         const layersSection = document.getElementById('layers')!
         for (let i = 0; i < this.illuminationLayers.length; i++) {
             const layer = this.illuminationLayers[i]
-
             const label = document.createElement('label')
             label.innerText = `Shading Level ${i}:`
             label.id = `level-${i}-label`
-
             layersSection.append(label, layer.context.canvas)
         }
     }
@@ -140,33 +137,24 @@ export class Painter extends ShaderMaterial {
         ctx.moveTo(0, 0)
         for (let i = 1; i < Painter.dimension / 2; i += 1) {
             ctx.lineWidth = Math.random() * 2.3 + level + 1
-            // const start = (i - 1) % 2 == 0 ? [Math.abs((i - 1) * 5), 0] : [0, Math.abs((i - 1) * 5)]
             const [x, y] = i % 2 == 0 ? [i * 5, 0] : [0, i * 5]
-            // randomize line width along its path
-            // for (let [linePosX, linePosY] = start; linePosX > x && linePosY > y; linePosX += 1, linePosY += 1) {
-            //     ctx.lineWidth = Math.random() * 3 + level + 1
-            //     ctx.lineTo(linePosX, linePosY)
-            //     ctx.stroke()
-            // }
             ctx.lineTo(x, y)
         }
         ctx.stroke()
         ctx.restore()
     }
 
-    private pointillism(level: number, ctx: CanvasRenderingContext2D, color: string) {
+    private pointillism(_: number, ctx: CanvasRenderingContext2D, color: string) {
         ctx.save()
         ctx.fillStyle = ctx.strokeStyle = color
         const radius = Math.random() * 5 + 10
-        // const offset = () => (radius + 2 * ((this.illuminationLayers.length - level) + 1))
         const offset = () => radius - Math.random() * 3
         for (let x = 0; x < Painter.dimension; x += offset()) {
             for (let y = 0; y < Painter.dimension; y += offset()) {
-                ctx.lineWidth = 1 //Math.random() * 3 + level + 1
+                ctx.lineWidth = 1
                 ctx.beginPath()
                 ctx.arc(x, y, radius, 0, 2 * Math.PI)
                 ctx.stroke()
-                // ctx.fill()
             }
         }
         ctx.restore()
@@ -179,7 +167,7 @@ export class Painter extends ShaderMaterial {
         canvas.height = Painter.dimension
         canvas.width = Painter.dimension
         let context = canvas.getContext('2d')!
-        context.fillStyle = startingColor.getStyle() //new Color(Math.random(), Math.random(), Math.random()).getStyle()
+        context.fillStyle = startingColor.getStyle()
         context.fillRect(0, 0, Painter.dimension, Painter.dimension)
         let texture = new CanvasTexture(canvas)
         return { context, texture }

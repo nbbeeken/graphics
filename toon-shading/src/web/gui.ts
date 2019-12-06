@@ -36,6 +36,7 @@ class GUIControls {
         public gather = false,
         public gatherSpeed = 20,
         // System controls
+        //@ts-ignore
         private forceUpdate = () => this._hasChanged = true,
         public showCanvases = false,
     ) {

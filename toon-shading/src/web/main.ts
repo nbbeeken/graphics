@@ -3,13 +3,13 @@ import { PerspectiveCamera } from "three/src/cameras/PerspectiveCamera"
 import { Scene } from "three/src/scenes/Scene"
 import { WebGLRenderer } from "three/src/renderers/WebGLRenderer"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { Vector3 } from "three/src/math/Vector3"
 
 import * as Stats from "stats.js"
 
 import { gl } from './canvas'
 import { TonalObject3D } from "./tonal"
 import { gui } from "./gui"
-import { Vector3 } from "three"
 
 const stats = new Stats()
 stats.showPanel(0)
@@ -37,7 +37,6 @@ export async function main() {
     // zoom out a bit
     camera.position.z = 3200
 
-    let numOfObjects = 0
     let offsetCount = 0
     let linesBeingShown = gui.showLines
     let fps = 0
@@ -67,7 +66,6 @@ export async function main() {
                     offsetCount++
                 }
             }
-            numOfObjects = gui.objectCount
         }
 
         controls.update()
@@ -101,7 +99,7 @@ export async function main() {
             output = true
         }
     }
-
+    gui.objectCount = 1
     animate(prevTime)
 }
 
@@ -122,6 +120,7 @@ function newTonalObject(offsetCount: number) {
 }
 
 function onResize() {
+    // from three.js resize docs
     // set the aspect ratio to match the new browser window aspect ratio
     const container = document.getElementsByTagName('main')[0]
     camera.aspect = container.clientWidth / container.clientHeight

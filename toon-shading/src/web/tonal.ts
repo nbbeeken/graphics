@@ -1,14 +1,14 @@
 import { Group } from "three/src/objects/Group"
 import { Mesh } from "three/src/objects/Mesh"
+import { LineBasicMaterial } from "three/src/materials/LineBasicMaterial"
+import { Line } from "three/src/objects/Line"
+import { Object3D } from "three/src/core/Object3D"
+import { Geometry } from "three/src/core/Geometry"
 
 import { Painter } from "./painter"
 import { Inker } from "./inker"
 import { ShapesSelector } from "./shapes"
 import { Animator } from "./animator"
-import { LineBasicMaterial } from "three/src/materials/LineBasicMaterial"
-import { Line } from "three/src/objects/Line"
-import { Object3D } from "three/src/core/Object3D"
-import { Geometry } from "three/src/core/Geometry"
 
 const painter = new Painter()
 const inker = new Inker()

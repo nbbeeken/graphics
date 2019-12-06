@@ -11,8 +11,6 @@ const donut = new TorusGeometry(900, 300, 160, 100)
 const torusKnot = new TorusKnotGeometry(900, 300, 150, 18)
 
 export class ShapesSelector {
-    constructor() { }
-
     static get geometry(): Geometry {
         // Saved references to geometries
         const geometry = {
@@ -21,6 +19,4 @@ export class ShapesSelector {
         }[gui.geometry]
         return geometry
     }
-
-
 }

@@ -1,6 +1,6 @@
 import { showError } from "./utils"
 
-const PROXY_ENABLED = false
+const PROXY_ENABLED = false // Enable for extreme debugging
 
 export function glCheckErrorProxy(gl: WebGL2RenderingContext) {
     function get(target: WebGL2RenderingContext, key: keyof WebGL2RenderingContext) {
@@ -16,7 +16,6 @@ export function glCheckErrorProxy(gl: WebGL2RenderingContext) {
                 if (errorNum !== WebGL2RenderingContext.NO_ERROR) {
                     const errorMessage = `GLError 0x${errorNum.toString(16)}`
                     console.error(errorMessage)
-                    debugger // eslint-disable-line no-debugger
                     throw new Error(errorMessage)
                 }
                 return returnValue
@@ -52,24 +51,6 @@ function getRenderingContext(canvas: HTMLCanvasElement) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     return gl
-}
-
-export function resizeCanvas(gl: WebGL2RenderingContext) {
-    var realToCSSPixels = window.devicePixelRatio
-
-    // Lookup the size the browser is displaying the canvas in CSS pixels
-    // and compute a size needed to make our drawing buffer match it in
-    // device pixels.
-    var displayWidth = Math.floor((gl.canvas as HTMLCanvasElement).clientWidth * realToCSSPixels)
-    var displayHeight = Math.floor((gl.canvas as HTMLCanvasElement).clientHeight * realToCSSPixels)
-
-    // Check if the canvas is not the same size.
-    if (gl.canvas.width !== displayWidth || gl.canvas.height !== displayHeight) {
-        // Make the canvas the same size
-        gl.canvas.width = displayWidth
-        gl.canvas.height = displayHeight
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-    }
 }
 
 const canvas = document.getElementById('display0') as HTMLCanvasElement
