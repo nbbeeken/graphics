@@ -1,8 +1,10 @@
-import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
-import { BackSide } from "three/src/constants"
-import { Color } from "three/src/math/Color"
-import { Vector3 } from "three/src/math/Vector3"
-import { Material } from "three/src/materials/Material"
+import {
+    ShaderMaterial,
+    BackSide,
+    Color,
+    Vector3,
+    Material,
+} from "three"
 
 import { gui } from "./gui"
 

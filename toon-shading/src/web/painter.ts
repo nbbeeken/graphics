@@ -1,11 +1,14 @@
-import { Color } from "three/src/math/Color"
-import { CanvasTexture } from "three/src/textures/CanvasTexture"
-import { DataTexture } from "three/src/textures/DataTexture"
-import { RGBFormat, UnsignedByteType } from "three/src/constants"
-import { Vector3 } from "three/src/math/Vector3"
-import { Texture } from "three/src/textures/Texture"
-import { ShaderMaterial } from "three/src/materials/ShaderMaterial"
-import { Material } from "three/src/materials/Material"
+import {
+    Color,
+    CanvasTexture,
+    DataTexture,
+    RGBAFormat,
+    Vector3,
+    Texture,
+    ShaderMaterial,
+    Material,
+    UnsignedByteType,
+} from "three"
 
 import { gui } from "./gui"
 import { calculateLakeColors, LakeColors, selectStandardSubstanceLighting, SubstanceLighting } from "./lakes"
@@ -87,7 +90,7 @@ export class Painter extends ShaderMaterial {
         return new DataTexture(new Uint8Array([
             ...lakeColors.illuminated,
             ...lakeColors.shadowed,
-        ]), 2, 1, RGBFormat, UnsignedByteType)
+        ]), 2, 1, RGBAFormat, UnsignedByteType)
     }
 
     /**

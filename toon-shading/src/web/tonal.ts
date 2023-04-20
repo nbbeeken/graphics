@@ -1,9 +1,10 @@
-import { Group } from "three/src/objects/Group"
-import { Mesh } from "three/src/objects/Mesh"
-import { LineBasicMaterial } from "three/src/materials/LineBasicMaterial"
-import { Line } from "three/src/objects/Line"
-import { Object3D } from "three/src/core/Object3D"
-import { Geometry } from "three/src/core/Geometry"
+import {
+    Group,
+    Mesh,
+    LineBasicMaterial,
+    Line,
+    Object3D,
+} from "three"
 
 import { Painter } from "./painter"
 import { Inker } from "./inker"
@@ -20,7 +21,7 @@ export class TonalObject3D extends Group {
         super()
         this.addGeometries(ShapesSelector.geometry)
     }
-    addGeometries(...geometries: Geometry[]) {
+    addGeometries(...geometries: any[]) {
         let all: Object3D[] = geometries.flatMap(geometry => {
             const object = new Mesh(geometry, painter)
             const shadow = new Mesh(geometry, inker)

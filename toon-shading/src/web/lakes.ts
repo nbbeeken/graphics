@@ -1,4 +1,4 @@
-import { Vector3 } from "three/src/math/Vector3"
+import { Vector3 } from "three"
 
 export interface SubstanceLighting {
     ambientMaterial: Vector3

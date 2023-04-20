@@ -1,6 +1,5 @@
-import { Vector3 } from "three/src/math/Vector3"
-import { Geometry } from "three/src/core/Geometry"
-import { BufferGeometry } from "three/src/core/BufferGeometry"
+import { Vector3 } from "three"
+import { BufferGeometry } from "three"
 
 import { gui } from "./gui"
 import { ShapesSelector } from "./shapes"
@@ -14,7 +13,7 @@ export class Animator {
     }
 
     newLine(vertex: Vector3, name?: number) {
-        let geo = new Geometry()
+        let geo = new BufferGeometry()
         geo.name = `line_${name}`
         const start = vertex
         const end = new Vector3(
@@ -73,7 +72,7 @@ export class Animator {
         return result
     }
 
-    beforeRender = ({ }, { }, { }, geometry: Geometry | BufferGeometry, { }) => {
+    beforeRender = ({ }, { }, { }, geometry: BufferGeometry, { }) => {
         if (!this.velocityChange()) {
             return
         }

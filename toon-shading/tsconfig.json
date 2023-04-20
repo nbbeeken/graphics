@@ -16,6 +16,7 @@
         "emitDecoratorMetadata": true, /* Enables experimental support for emitting type metadata for decorators. */
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": false,
         "lib": [
             "dom",
             "ESNext.Array"

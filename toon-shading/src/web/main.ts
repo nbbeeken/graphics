@@ -1,15 +1,17 @@
-import { Color } from "three/src/math/Color"
-import { PerspectiveCamera } from "three/src/cameras/PerspectiveCamera"
-import { Scene } from "three/src/scenes/Scene"
-import { WebGLRenderer } from "three/src/renderers/WebGLRenderer"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import { Vector3 } from "three/src/math/Vector3"
+import {
+    Color,
+    PerspectiveCamera,
+    Scene,
+    WebGLRenderer,
+    Vector3,
+} from "three"
 
 import * as Stats from "stats.js"
 
 import { gl } from './canvas'
 import { TonalObject3D } from "./tonal"
 import { gui } from "./gui"
+import { OrbitControls } from "./OrbitControls"
 
 const stats = new Stats()
 stats.showPanel(0)

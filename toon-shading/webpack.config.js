@@ -1,35 +1,28 @@
 // @ts-check
 const path = require('path')
-const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-// @ts-ignore
-const Stylish = require('webpack-stylish')
-const OptimizeThreePlugin = require('@vxna/optimize-three-webpack-plugin')
-const CompressionPlugin = require('compression-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 /** @type { import('webpack').Configuration } */
 const config = {
     stats: false,
-    entry: ['./src/index.ts', './src/main.css'],
+    entry: ['./src/index.ts'],
     devtool: 'cheap-source-map',
     devServer: {
-        writeToDisk: true,
         compress: false,
         port: 1234,
     },
     optimization: {
         sideEffects: true,
-        splitChunks: {
-            cacheGroups: {
-                commons: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name: 'vendors',
-                    chunks: 'all'
-                }
-            }
-        }
+        moduleIds: 'named',
+        // splitChunks: {
+        //     cacheGroups: {
+        //         commons: {
+        //             test: /[\\/]node_modules[\\/]/,
+        //             name: 'vendors',
+        //             chunks: 'all'
+        //         }
+        //     }
+        // }
     },
     performance: {
         maxAssetSize: 700000,
@@ -39,16 +32,18 @@ const config = {
         rules: [
             {
                 test: /\.ts$/,
-                use: ['ts-loader'],
+                use: [{
+                    loader: 'ts-loader',
+                    options: {
+                        transpileOnly: true
+                    }
+                }],
+
                 exclude: /node_modules/,
             },
             {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                ],
+                use: ['style-loader', 'css-loader'],
             },
             {
                 test: /\.(gif|png|jpe?g|svg|cur|obj)$/i,
@@ -68,20 +63,11 @@ const config = {
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-        new CleanWebpackPlugin(),
-        //@ts-ignore
-        new MiniCssExtractPlugin({
-            filename: '[name].css'
-        }),
         // @ts-ignore
         new HtmlWebpackPlugin({
             template: 'src/index.html',
             favicon: 'src/favicon.ico',
         }),
-        // @ts-ignore
-        new webpack.NamedModulesPlugin(),
-        new OptimizeThreePlugin(),
-        new Stylish()
     ]
 }
 

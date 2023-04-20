@@ -1,6 +1,7 @@
-import { TorusGeometry } from "three/src/geometries/TorusGeometry"
-import { TorusKnotGeometry } from "three/src/geometries/TorusKnotGeometry"
-import { Geometry } from "three/src/core/Geometry"
+import {
+    TorusGeometry,
+    TorusKnotGeometry,
+} from "three"
 
 import { gui } from "./gui"
 
@@ -11,7 +12,7 @@ const donut = new TorusGeometry(900, 300, 160, 100)
 const torusKnot = new TorusKnotGeometry(900, 300, 150, 18)
 
 export class ShapesSelector {
-    static get geometry(): Geometry {
+    static get geometry(): TorusGeometry | TorusKnotGeometry {
         // Saved references to geometries
         const geometry = {
             donut: donut,
